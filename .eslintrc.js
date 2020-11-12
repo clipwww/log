@@ -14,7 +14,16 @@ module.exports = {
     ecmaVersion: 2020
   },
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off"
+    "no-console": [
+      process.env.NODE_ENV === "production" ? "warn" : "off",
+      { allow: ["warn", "error"] }
+    ],
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    "prettier/prettier": ["off", { singleQuote: 1 }],
+    "no-explicit-any": "off",
+    "no-useless-escape": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/no-use-before-define": "off"
   }
 };
