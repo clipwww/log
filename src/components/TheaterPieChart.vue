@@ -1,5 +1,6 @@
 <template>
-  <PieChart :id="id" title="影城" :data="dataset.data" :labels="dataset.labels" />
+  <h4 class="text-center">影城</h4>
+  <PieChart :id="id" :data="dataset.data" :labels="dataset.labels" />
 </template>
 
 <script lang="ts">

@@ -6,6 +6,7 @@
 import { defineComponent, nextTick, PropType, onMounted, Ref, ref, watch } from 'vue';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useMediaQuery } from '@vueuse/core';
 
 import { colors } from '@/utils';
 
@@ -31,11 +32,11 @@ export default defineComponent({
   },
   setup(props) {
     const pieInstance: Ref<Chart | null> = ref(null);
+    const isLargeScreen = useMediaQuery('(min-width: 768px)');
 
     watch(
       () => props.data,
-      async () => {
-        await nextTick();
+      () => {
         initChart();
       }
     );
@@ -44,7 +45,13 @@ export default defineComponent({
       initChart();
     });
 
-    function initChart() {
+    async function initChart() {
+      await nextTick();
+
+      if (pieInstance.value) {
+        pieInstance.value.clear();
+      }
+
       const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
       pieInstance.value = new Chart(ctx, {
         plugins: [ChartDataLabels],
@@ -60,6 +67,7 @@ export default defineComponent({
         },
         options: {
           responsive: true,
+          aspectRatio: isLargeScreen.value ? 1.5 : props.labels.length > 10 ? 0.7 : 1,
           title: {
             display: !!props.title,
             text: props.title,
@@ -77,7 +85,9 @@ export default defineComponent({
           },
           plugins: {
             datalabels: {
-              color: '#ffffff',
+              color: '#000000',
+              textStrokeColor: '#ffffff',
+              textStrokeWidth: 3,
               formatter(value) {
                 const total = props.data.reduce((total, val) => (total += +val), 0);
                 const percentage = (value / total) * 100;

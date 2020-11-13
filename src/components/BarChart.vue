@@ -3,13 +3,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, PropType, onMounted, Ref, ref, watch, computed, reactive } from 'vue';
-import _groupBy from 'lodash/groupBy';
+import { defineComponent, nextTick, PropType, onMounted, Ref, ref, watch } from 'vue';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useMediaQuery } from '@vueuse/core';
 
-import { dayjs } from '@/plugins/dayjs';
-import { MovieRecordVM } from '@/view-models';
 import { colors } from '@/utils';
 
 Chart.plugins.unregister(ChartDataLabels);
@@ -20,35 +18,25 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    records: {
-      type: Array as PropType<MovieRecordVM[]>,
+    data: {
+      type: Array as PropType<number[]>,
       required: true,
+    },
+    labels: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
+    title: {
+      type: String,
     },
   },
   setup(props) {
-    const months = Array(12)
-      .fill('')
-      .map((_, i) => i);
-
     const barInstance: Ref<Chart | null> = ref(null);
-    const groupByMonth = computed(() => _groupBy(props.records, (item) => dayjs(item.date).month()));
-
-    const dataset = reactive({
-      data: computed(() => {
-        const obj = Object.keys(groupByMonth.value).map((key) => {
-          return {
-            month: +key,
-            value: groupByMonth.value[key].length,
-          };
-        });
-        return months.map((m) => obj.find((item) => item.month === m)?.value ?? 0);
-      }),
-    });
+    const isLargeScreen = useMediaQuery('(min-width: 768px)');
 
     watch(
-      () => props.records,
-      async () => {
-        await nextTick();
+      () => props.data,
+      () => {
         initChart();
       }
     );
@@ -57,7 +45,13 @@ export default defineComponent({
       initChart();
     });
 
-    function initChart() {
+    async function initChart() {
+      await nextTick();
+
+      if (barInstance.value) {
+        barInstance.value.clear();
+      }
+
       const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
       barInstance.value = new Chart(ctx, {
         plugins: [ChartDataLabels],
@@ -65,17 +59,18 @@ export default defineComponent({
         data: {
           datasets: [
             {
-              data: dataset.data,
+              data: props.data,
               backgroundColor: colors,
             },
           ],
-          labels: months.map((m) => dayjs().month(m).format('MMM')),
+          labels: props.labels,
         },
         options: {
           responsive: true,
+          aspectRatio: isLargeScreen.value ? 1.5 : 1,
           title: {
-            display: true,
-            text: '每個月看電影的次數',
+            display: !!props.title,
+            text: props.title,
           },
           legend: {
             display: false,
@@ -95,11 +90,13 @@ export default defineComponent({
           },
           plugins: {
             datalabels: {
-              textAlign: 'center',
-              align: 'center',
-              color: '#ffffff',
+              textAlign: 'start',
+              align: 'top',
+              color: '#000000',
+              textStrokeColor: '#ffffff',
+              textStrokeWidth: 3,
               formatter(value) {
-                return value > 0 ? `${value}次` : '';
+                return value > 0 ? value : '';
               },
             },
           },
