@@ -1,4 +1,5 @@
 const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? '/movie-record/' : '/',
@@ -18,6 +19,7 @@ module.exports = {
               }
             }
           }),
+          new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
         ]
       };
     } else {

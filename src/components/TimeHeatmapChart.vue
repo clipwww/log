@@ -141,7 +141,6 @@ export default defineComponent({
       d3.selectAll(`#${props.id} > *`).remove();
       const svg = d3.select(`#${props.id}`);
       const svgWidth = (svg?.node() as Element)?.getBoundingClientRect()?.width;
-      console.log(svgWidth);
       const chartWidth = svgWidth - margin.left - margin.right;
       const rectWidth = Math.floor(chartWidth / weekdayNames.length);
 
