@@ -32,7 +32,7 @@
         <div class="px-2 rounded-b">
           <MovieRecordItem
             v-for="item in dayDetails.records"
-            format="YYYY/MM/DD"
+            format="YYYY/MM/DD HH:mm"
             :key="`${item.date}_${item.title}`"
             :record="item"
           />

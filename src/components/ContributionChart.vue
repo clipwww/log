@@ -82,13 +82,16 @@ export default defineComponent({
     const arrayByDate = computed(() => {
       const group = _groupBy(props.records, (item) => dayjs(item.date).startOf('day').toISOString());
 
-      return Object.keys(group).map((key) => {
-        return {
+      const arrayByDate: { date: string; count: number; records: MovieRecordVM[] }[] = [];
+      Object.keys(group).forEach((key) => {
+        const dayOfYear = dayjs(key).dayOfYear();
+        arrayByDate[dayOfYear] = {
           date: key,
           count: group[key].length,
-          records: props.records.filter((item) => dayjs(item.date).isSame(key, 'day')),
+          records: group[key],
         };
       });
+      return arrayByDate;
     });
 
     const state = reactive({
@@ -103,6 +106,7 @@ export default defineComponent({
             return {
               date: '',
               value: -1,
+              records: [] as MovieRecordVM[],
             };
           })
           .concat(
@@ -110,11 +114,13 @@ export default defineComponent({
               .fill('')
               .map((v, i) => {
                 const thisDay = dayObj.add(i, 'day');
-                const count = arrayByDate.value.find((record) => thisDay.isSame(record.date, 'day'))?.count ?? 0;
+                const count = arrayByDate.value[i + 1]?.count ?? 0;
+                const records = arrayByDate.value[i + 1]?.records ?? [];
 
                 return {
                   date: thisDay.toISOString(),
                   value: count,
+                  records,
                 };
               })
           );
@@ -192,7 +198,7 @@ export default defineComponent({
 
           dayDetails.show = true;
           dayDetails.date = d.date;
-          dayDetails.records = props.records.filter((record) => dayjs(d.date).isSame(record.date, 'day')).reverse();
+          dayDetails.records = [...d.records].reverse();
         });
 
       svg
