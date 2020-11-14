@@ -4,16 +4,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/movie-record/404.html"
   },
   {
-    "revision": "87887c9f2ecc29663ca3",
+    "revision": "18591efa56b8986d5083",
     "url": "/movie-record/css/app.7bdf4b1e.css"
   },
   {
-    "revision": "e95fce1a5feec8c478dd8555a5433dcf",
+    "revision": "d3e6bb4bb7568baeb199f23a710df073",
     "url": "/movie-record/index.html"
   },
   {
-    "revision": "87887c9f2ecc29663ca3",
-    "url": "/movie-record/js/app.679d4263.js"
+    "revision": "18591efa56b8986d5083",
+    "url": "/movie-record/js/app.bef310ec.js"
   },
   {
     "revision": "c1ad3a116c54242cddbe",
