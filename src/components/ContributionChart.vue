@@ -79,20 +79,7 @@ export default defineComponent({
       .map((_, i) => dayjs().weekday(i).format('dd'))
       .filter((_, i) => i % 2 === 1);
 
-    const arrayByDate = computed(() => {
-      const group = _groupBy(props.records, (item) => dayjs(item.date).startOf('day').toISOString());
-
-      const arrayByDate: { date: string; count: number; records: MovieRecordVM[] }[] = [];
-      Object.keys(group).forEach((key) => {
-        const dayOfYear = dayjs(key).dayOfYear();
-        arrayByDate[dayOfYear] = {
-          date: key,
-          count: group[key].length,
-          records: group[key],
-        };
-      });
-      return arrayByDate;
-    });
+    const arrayByDate = computed(() => _groupBy(props.records, (item) => dayjs(item.date).dayOfYear()));
 
     const state = reactive({
       contributions: computed(() => {
@@ -114,8 +101,8 @@ export default defineComponent({
               .fill('')
               .map((v, i) => {
                 const thisDay = dayObj.add(i, 'day');
-                const count = arrayByDate.value[i + 1]?.count ?? 0;
-                const records = arrayByDate.value[i + 1]?.records ?? [];
+                const count = arrayByDate.value[i + 1]?.length ?? 0;
+                const records = arrayByDate.value[i + 1] || [];
 
                 return {
                   date: thisDay.toISOString(),
