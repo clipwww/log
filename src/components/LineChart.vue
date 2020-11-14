@@ -1,5 +1,5 @@
 <template>
-  <canvas :id="id"></canvas>
+  <canvas :id="id" :key="id"></canvas>
 </template>
 
 <script lang="ts">

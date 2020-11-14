@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto relative">
     <div class="w-full overflow-x-auto">
-      <svg :id="id" :width="62 * rectWidth" :height="10 * rectWidth"></svg>
+      <svg :id="id" :key="id" :width="62 * rectWidth" :height="10 * rectWidth"></svg>
     </div>
     <div v-show="dayDetails.show" class="border rounded">
       <div class="p-2 bg-gray-600 text-white rounded-t flex items-center justify-between">
