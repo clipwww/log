@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/movie-record/precache-manifest.a21919b9028f104d63b31b62ec031d0d.js"
+  "/movie-record/precache-manifest.a642a1ca050ac7808dc8d2d5876d4a33.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "movie-record"});
