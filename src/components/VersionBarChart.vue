@@ -30,7 +30,7 @@ export default defineComponent({
 
     const dataset = reactive({
       data: computed(() => Object.keys(groupByVersion.value).map((version) => groupByVersion.value[version].length)),
-      labels: Object.keys(groupByVersion.value).map((version) => version),
+      labels: computed(() => Object.keys(groupByVersion.value).map((version) => version)),
     });
 
     return {
