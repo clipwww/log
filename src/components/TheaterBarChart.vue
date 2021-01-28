@@ -1,8 +1,15 @@
 <template>
-  <PieChart :id="id" :data="dataset.data" :labels="dataset.labels" @pie-click="onClick" />
-  <MovieRecordsPopup v-model:records="areaDetails.records">
+  <BarChart
+    type="horizontalBar"
+    :id="id"
+    :key="id"
+    :data="dataset.data"
+    :labels="dataset.labels"
+    @bar-click="onClick"
+  />
+  <MovieRecordsPopup v-model:records="theaterDetails.records">
     <template #title>
-      <div class="text-center py-2">{{ areaDetails.label }}</div>
+      <div class="text-center py-2">{{ theaterDetails.label }}</div>
     </template>
   </MovieRecordsPopup>
 </template>
@@ -13,18 +20,18 @@ import _groupBy from 'lodash/groupBy';
 
 import { MovieRecordVM } from '@/view-models';
 
-import PieChart from './PieChart.vue';
+import BarChart from './BarChart.vue';
 import MovieRecordsPopup from './MovieRecordsPopup.vue';
 
 export default defineComponent({
   components: {
-    PieChart,
+    BarChart,
     MovieRecordsPopup,
   },
   props: {
     id: {
       type: String,
-      default: 'js-area-pie',
+      default: 'js-theater-bar',
     },
     records: {
       type: Array as PropType<MovieRecordVM[]>,
@@ -32,14 +39,18 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const groupByArea = computed(() => _groupBy(props.records, (item) => item.area));
+    const groupByTheater = computed(() => _groupBy(props.records, (item) => item.theater));
 
     const dataset = reactive({
-      data: computed(() => Object.keys(groupByArea.value).map((key) => groupByArea.value[key].length)),
-      labels: computed(() => Object.keys(groupByArea.value)),
+      data: computed(() =>
+        Object.keys(groupByTheater.value)
+          .map((key) => groupByTheater.value[key].length)
+          .sort((a, b) => (a < b ? 1 : -1))
+      ),
+      labels: computed(() => Object.keys(groupByTheater.value)),
     });
 
-    const areaDetails = reactive<{
+    const theaterDetails = reactive<{
       label: string;
       records: MovieRecordVM[];
     }>({
@@ -48,13 +59,13 @@ export default defineComponent({
     });
 
     function onClick({ label }: { label: string }) {
-      areaDetails.label = label;
-      areaDetails.records = groupByArea.value[label];
+      theaterDetails.label = label;
+      theaterDetails.records = groupByTheater.value[label];
     }
 
     return {
       dataset,
-      areaDetails,
+      theaterDetails,
 
       onClick,
     };

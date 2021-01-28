@@ -3,58 +3,28 @@
     <div class="w-full overflow-x-auto">
       <svg :id="id" :key="id" :width="62 * rectWidth" :height="10 * rectWidth"></svg>
     </div>
-    <div v-show="dayDetails.show" class="border rounded">
-      <div class="p-2 bg-gray-600 text-white rounded-t flex items-center justify-between">
-        <div>{{ formatDate(dayDetails.date, false) }}</div>
-        <div class="font-bold cursor-pointer text-xl" @click="dayDetails.show = false">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            aria-hidden="true"
-            focusable="false"
-            role="img"
-            class="iconify iconify--mdi"
-            width="1em"
-            height="1em"
-            preserveAspectRatio="xMidYMid meet"
-            viewBox="0 0 24 24"
-            style="transform: rotate(360deg)"
-          >
-            <path
-              d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"
-              fill="currentColor"
-            ></path>
-          </svg>
-        </div>
-      </div>
-      <div class="px-2 rounded-b">
-        <MovieRecordItem
-          v-for="item in dayDetails.records"
-          format="HH:mm"
-          :key="`${item.date}_${item.title}`"
-          :record="item"
-        />
-        <div class="p-2" v-if="!dayDetails.records.length">
-          <div class="text-xs text-gray-400">這裡什麼都沒有唷</div>
-        </div>
-      </div>
-    </div>
   </div>
+
+  <MovieRecordsPopup v-model:records="dayDetails.records">
+    <template #title>
+      <div class="text-center py-2">{{ formatDate(dayDetails.date, false) }}</div>
+    </template>
+  </MovieRecordsPopup>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive, computed, PropType, watch, nextTick, toRefs, onMounted } from 'vue';
 import _groupBy from 'lodash/groupBy';
-import { dayjs, formatDate } from '@/plugins/dayjs';
+import { dayjs } from '@/plugins/dayjs';
 import * as d3 from 'd3/index';
 
 import { MovieRecordVM } from '@/view-models';
 
-import MovieRecordItem from '@/components/MovieRecordItem.vue';
+import MovieRecordsPopup from '@/components/MovieRecordsPopup.vue';
 
 export default defineComponent({
   components: {
-    MovieRecordItem,
+    MovieRecordsPopup,
   },
   props: {
     id: {
@@ -114,12 +84,10 @@ export default defineComponent({
       }),
     });
 
-    const dayDetails: {
-      show: boolean;
+    const dayDetails = reactive<{
       date: string;
       records: MovieRecordVM[];
-    } = reactive({
-      show: false,
+    }>({
       date: '',
       records: [],
     });
@@ -129,16 +97,6 @@ export default defineComponent({
       async () => {
         await nextTick();
         drawGraph();
-      }
-    );
-
-    watch(
-      () => dayDetails.show,
-      (bool) => {
-        if (!bool) {
-          dayDetails.date = '';
-          dayDetails.records = [];
-        }
       }
     );
 
@@ -178,12 +136,6 @@ export default defineComponent({
         .attr('title', (d) => d.date)
         .attr('cursor', (d) => (d.value >= 0 ? 'pointer' : 'initial'))
         .on('click', (e: Event, d) => {
-          if (d.value < 0) {
-            dayDetails.show = false;
-            return;
-          }
-
-          dayDetails.show = true;
           dayDetails.date = d.date;
           dayDetails.records = [...d.records].reverse();
         });
@@ -217,6 +169,10 @@ export default defineComponent({
         .attr('x', svgFontSize)
         .style('text-anchor', 'middle')
         .style('font-size', svgFontSize);
+    }
+
+    function formatDate(date: string) {
+      return dayjs(date).format('YYYY/MM/DD (ddd)');
     }
 
     return {

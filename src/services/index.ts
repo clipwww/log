@@ -6,8 +6,8 @@ export const requestGET = <T>(url: string): Promise<ResultListGenericVM<T>> => {
     const xmlHttpReq = new XMLHttpRequest();
     xmlHttpReq.addEventListener("progress", (e) => {
       if (e.lengthComputable) {
-        const percentComplete = e.loaded / e.total;
-        console.log(`${percentComplete * 100}%`)
+        // const percentComplete = e.loaded / e.total;
+        // console.log(`${percentComplete * 100}%`)
       }
     });
     xmlHttpReq.addEventListener("load", () => {

@@ -1,14 +1,14 @@
 <template>
-  <BarChart type="horizontalBar" :id="id" :data="data" :labels="labels" @bar-click="onClick" />
-  <MovieRecordsPopup v-model:records="versionDetails.records">
+  <BarChart :id="id" :data="dataset.data" :labels="dataset.labels" @bar-click="onClick" />
+  <MovieRecordsPopup v-model:records="areaDetails.records">
     <template #title>
-      <div class="text-center py-2">{{ versionDetails.label }}</div>
+      <div class="text-center py-2">{{ areaDetails.label }}</div>
     </template>
   </MovieRecordsPopup>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, reactive, toRefs } from 'vue';
+import { computed, defineComponent, PropType, reactive } from 'vue';
 import _groupBy from 'lodash/groupBy';
 
 import { MovieRecordVM } from '@/view-models';
@@ -24,7 +24,7 @@ export default defineComponent({
   props: {
     id: {
       type: String,
-      required: true,
+      default: 'js-area-bar',
     },
     records: {
       type: Array as PropType<MovieRecordVM[]>,
@@ -32,14 +32,14 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const groupByVersion = computed(() => _groupBy(props.records, (item) => item.version));
+    const groupByArea = computed(() => _groupBy(props.records, (item) => item.area));
 
     const dataset = reactive({
-      data: computed(() => Object.keys(groupByVersion.value).map((version) => groupByVersion.value[version].length)),
-      labels: computed(() => Object.keys(groupByVersion.value).map((version) => version)),
+      data: computed(() => Object.keys(groupByArea.value).map((key) => groupByArea.value[key].length)),
+      labels: computed(() => Object.keys(groupByArea.value)),
     });
 
-    const versionDetails = reactive<{
+    const areaDetails = reactive<{
       label: string;
       records: MovieRecordVM[];
     }>({
@@ -48,13 +48,13 @@ export default defineComponent({
     });
 
     function onClick({ label }: { label: string }) {
-      versionDetails.label = label;
-      versionDetails.records = groupByVersion.value[label];
+      areaDetails.label = label;
+      areaDetails.records = groupByArea.value[label];
     }
 
     return {
-      ...toRefs(dataset),
-      versionDetails,
+      dataset,
+      areaDetails,
 
       onClick,
     };

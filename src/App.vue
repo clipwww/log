@@ -1,62 +1,118 @@
 <template>
-  <div class="bg-gray-400 lg:p-4 p-1 min-h-screen">
-    <div v-if="!ready" class="bg-white p-8 rounded">
-      <div v-for="n in 5" :key="n" class="animate-pulse space-x-4">
-        <div class="flex-1 space-y-2 py-1">
-          <div class="h-4 bg-gray-300 rounded w-3/4"></div>
-          <div class="space-y-2">
-            <div class="h-4 bg-gray-300 rounded"></div>
-            <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+  <div :class="ready ? '' : 'py-4'">
+    <van-skeleton title :row="10" :loading="!ready">
+      <van-tabs v-model:active="activeTab" name="data" sticky border>
+        <van-tab title="資料">
+          <div class="text-center my-2">
+            <TotalAnalytics :records="records" />
           </div>
-        </div>
-      </div>
-    </div>
-    <div v-else class="bg-white rounded lg:p-4 p-2">
-      <div class="flex mb-8">
-        <div class="border border-r-0 px-4 p-3 whitespace-no-wrap bg-gray-700 text-white rounded-l">選擇年份</div>
-        <select v-model.number="filterYear" class="w-full border p-2 rounded-none bg-white rounded-r">
-          <option value="">全部</option>
-          <option v-for="item in arrayByYear" :key="item.id" :value="item.id">{{ item.id }}</option>
-        </select>
-      </div>
-
-      <div v-if="filterArrayByYear">
-        <h2 class="text-2xl text-center">{{ filterArrayByYear.id }}</h2>
-
-        <Dashboard :id="`${filterArrayByYear.id}`" :records="filterArrayByYear.records" />
-      </div>
-
-      <div v-else>
-        <h2 class="text-2xl text-center">總共</h2>
-
-        <Dashboard id="total" :records="records" hideContributionChart />
-
-        <div class="lg:flex items-start my-8">
-          <div class="lg:w-1/2 lg:mb-0 mb-4 lg:p-4 p-0">
+          <van-tabs :offset-top="44" :line-height="1" scrollspy sticky border>
+            <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+              <div class="max-w-2xl mx-auto">
+                <van-cell-group border>
+                  <template #title>
+                    <div class="text-center">{{ item.id }}</div>
+                    <div class="mt-3 mb-1">
+                      <ContributionChart :id="`js-contribution-${item.id}`" :records="item.records" />
+                    </div>
+                    <TotalAnalytics :records="item.records" />
+                  </template>
+                  <MovieRecordCell
+                    v-for="record in item.records"
+                    :record="record"
+                    :key="`${record.date}_${record.title}`"
+                  />
+                </van-cell-group>
+              </div>
+            </van-tab>
+          </van-tabs>
+        </van-tab>
+        <van-tab title="場數">
+          <div class="max-w-2xl mx-auto p-2">
             <LineChart id="total" :records="records" />
+            <div class="text-center text-xs my-2">累積下來每個月各看了幾場電影</div>
+            <FrequencyBarChart :id="`js-frequency-all`" :records="records" />
+            <van-tabs :line-height="1" border>
+              <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                <div class="text-center text-xs my-2">{{ item.id }} 每個月各看了幾場電影</div>
+                <FrequencyBarChart :id="`js-frequency-${item.id}`" :records="item.records" />
+              </van-tab>
+            </van-tabs>
           </div>
-          <div class="lg:w-1/2 lg:p-4 p-0">
-            <h4 class="text-center mb-2">二刷以上的電影</h4>
-            <div v-for="item in arrayByTitle" :key="item.title" class="border rounded mb-3 p-2">
-              <CollapseItem>
-                <template v-slot:title>
-                  <div class="lg:flex items-center">
-                    <div class="mr-2">{{ item.title }}</div>
-                    <div class="text-xl text-red-600">{{ item.count }} 次</div>
-                  </div>
-                </template>
-                <MovieRecordItem
-                  v-for="record in item.records"
-                  :key="`${record.date}_${record.title}`"
-                  :record="record"
-                  hideTitle
-                />
-              </CollapseItem>
+        </van-tab>
+        <van-tab title="時間">
+          <div class="max-w-2xl mx-auto p-2">
+            <TimeHeatmapChart :id="`js-heatmap-all`" :records="records" />
+            <div class="mt-5">
+              <van-tabs :line-height="1" border>
+                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                  <TimeHeatmapChart :id="`js-heatmap-${item.id}`" :records="item.records" />
+                </van-tab>
+              </van-tabs>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </van-tab>
+        <van-tab title="影廳">
+          <div class="max-w-2xl mx-auto p-2">
+            <TheaterBarChart :id="`js-theater-bar-all`" :records="records" />
+            <div class="mt-5">
+              <van-tabs :line-height="1" border>
+                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                  <TheaterBarChart :id="`js-theater-bar-${item.id}`" :records="item.records" />
+                </van-tab>
+              </van-tabs>
+            </div>
+          </div>
+        </van-tab>
+        <van-tab title="版本">
+          <div class="max-w-2xl mx-auto p-2">
+            <VersionBarChart :id="`js-version-bar-all`" :records="records" />
+            <div class="mt-5">
+              <van-tabs :line-height="1" border>
+                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                  <VersionBarChart :id="`js-version-bar-${item.id}`" :records="item.records" />
+                </van-tab>
+              </van-tabs>
+            </div>
+          </div>
+        </van-tab>
+        <van-tab title="國別">
+          <div class="max-w-2xl mx-auto p-2">
+            <AreaPieChart :id="`js-area-pie-all`" :records="records" />
+            <div class="mt-5">
+              <van-tabs :line-height="1" border>
+                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                  <AreaPieChart :id="`js-area-pie-${item.id}`" :records="item.records" />
+                </van-tab>
+              </van-tabs>
+            </div>
+          </div>
+        </van-tab>
+        <van-tab title="多刷">
+          <div class="max-w-2xl mx-auto">
+            <van-collapse v-model="activeCollapse" accordion>
+              <van-collapse-item v-for="item in arrayByTitle" :key="item.title" :name="item.title">
+                <template #title>
+                  <div class="flex items-center">
+                    <van-tag class="mr-2" type="primary" plain size="medium">x {{ item.count }}</van-tag>
+                    <span class="text-xs">{{ item.title }}</span>
+                  </div>
+                </template>
+                <div class="-mx-3 -my-4">
+                  <MovieRecordCell
+                    v-for="record in item.records"
+                    :record="record"
+                    :key="`${record.date}_${record.title}`"
+                    hideTitle
+                    size="mini"
+                  />
+                </div>
+              </van-collapse-item>
+            </van-collapse>
+          </div>
+        </van-tab>
+      </van-tabs>
+    </van-skeleton>
   </div>
 </template>
 
@@ -65,21 +121,40 @@ import { computed, defineComponent, Ref, ref } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 import _groupBy from 'lodash/groupBy';
 import { dayjs, formatDate } from '@/plugins/dayjs';
+import { Tabs, Tab, Skeleton, CellGroup, Collapse, CollapseItem, Tag } from 'vant';
 
 import { requestGET } from '@/services';
 import { MovieRecordVM } from '@/view-models';
 
-import Dashboard from '@/components/Dashboard.vue';
-import MovieRecordItem from '@/components/MovieRecordItem.vue';
-import CollapseItem from '@/components/CollapseItem.vue';
 import LineChart from '@/components/LineChart.vue';
+import MovieRecordCell from '@/components/MovieRecordCell.vue';
+import FrequencyBarChart from '@/components/FrequencyBarChart.vue';
+import TimeHeatmapChart from '@/components/TimeHeatmapChart.vue';
+import TotalAnalytics from '@/components/TotalAnalytics.vue';
+import AreaPieChart from '@/components/AreaPieChart.vue';
+import TheaterBarChart from '@/components/TheaterBarChart.vue';
+import VersionBarChart from '@/components/VersionBarChart.vue';
+import ContributionChart from '@/components/ContributionChart.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    Dashboard,
-    MovieRecordItem,
-    CollapseItem,
+    VanTabs: Tabs,
+    VanTab: Tab,
+    VanSkeleton: Skeleton,
+    VanCellGroup: CellGroup,
+    VanCollapse: Collapse,
+    VanCollapseItem: CollapseItem,
+    VanTag: Tag,
+
+    MovieRecordCell,
+    FrequencyBarChart,
+    TimeHeatmapChart,
+    TotalAnalytics,
+    AreaPieChart,
+    TheaterBarChart,
+    VersionBarChart,
+    ContributionChart,
     LineChart,
   },
   setup() {
@@ -94,6 +169,8 @@ export default defineComponent({
       }
     );
 
+    const activeTab = ref('data');
+    const activeCollapse = ref('');
     const filterYear = ref(dayjs().year());
     const records: Ref<MovieRecordVM[]> = computed(() => state.value.items);
     const arrayByYear = computed(() => {
@@ -133,6 +210,8 @@ export default defineComponent({
 
     return {
       ready,
+      activeTab,
+      activeCollapse,
       records,
       arrayByYear,
       arrayByTitle,

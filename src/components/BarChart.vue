@@ -29,8 +29,12 @@ export default defineComponent({
     title: {
       type: String,
     },
+    type: {
+      type: String as PropType<'bar' | 'horizontalBar'>,
+      default: 'bar',
+    },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const barInstance: Ref<Chart | null> = ref(null);
     const isLargeScreen = useMediaQuery('(min-width: 768px)');
 
@@ -55,7 +59,7 @@ export default defineComponent({
       const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
       barInstance.value = new Chart(ctx, {
         plugins: [ChartDataLabels],
-        type: 'bar',
+        type: props.type,
         data: {
           datasets: [
             {
@@ -67,7 +71,7 @@ export default defineComponent({
         },
         options: {
           responsive: true,
-          aspectRatio: isLargeScreen.value ? 1.5 : 1,
+          aspectRatio: isLargeScreen.value ? 1.5 : 0.8,
           title: {
             display: !!props.title,
             text: props.title,
@@ -90,8 +94,8 @@ export default defineComponent({
           },
           plugins: {
             datalabels: {
-              textAlign: 'start',
-              align: 'top',
+              textAlign: 'end',
+              align: 'center',
               color: '#000000',
               textStrokeColor: '#ffffff',
               textStrokeWidth: 3,
@@ -99,6 +103,18 @@ export default defineComponent({
                 return value > 0 ? value : '';
               },
             },
+          },
+          onClick(event, element) {
+            const index = element?.[0]?.['_index'];
+            const label = element?.[0]?.['_view']?.['label'];
+            if (isNaN(index)) {
+              return;
+            }
+
+            emit('bar-click', {
+              index,
+              label,
+            });
           },
         },
       });

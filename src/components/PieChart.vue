@@ -30,7 +30,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const pieInstance: Ref<Chart | null> = ref(null);
     const isLargeScreen = useMediaQuery('(min-width: 768px)');
 
@@ -94,6 +94,18 @@ export default defineComponent({
                 return percentage < 10 ? '' : value;
               },
             },
+          },
+          onClick(event, element) {
+            const index = element?.[0]?.['_index'];
+            const label = element?.[0]?.['_view']?.['label'];
+            if (isNaN(index)) {
+              return;
+            }
+
+            emit('pie-click', {
+              index,
+              label,
+            });
           },
         },
       });
