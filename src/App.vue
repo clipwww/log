@@ -28,11 +28,13 @@
           </van-tabs>
         </van-tab>
         <van-tab title="場數">
-          <div class="max-w-2xl mx-auto p-2">
-            <LineChart id="total" :records="records" />
-            <div class="text-center text-xs my-2">累積下來每個月各看了幾場電影</div>
-            <FrequencyBarChart :id="`js-frequency-all`" :records="records" />
+          <div class="max-w-2xl mx-auto px-2">
             <van-tabs :line-height="1" border>
+              <van-tab title="全部">
+                <LineChart id="total" :records="records" />
+                <div class="text-center text-xs my-2">累積下來每個月各看了幾場電影</div>
+                <FrequencyBarChart :id="`js-frequency-all`" :records="records" />
+              </van-tab>
               <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
                 <div class="text-center text-xs my-2">{{ item.id }} 每個月各看了幾場電影</div>
                 <FrequencyBarChart :id="`js-frequency-${item.id}`" :records="item.records" />
@@ -41,51 +43,51 @@
           </div>
         </van-tab>
         <van-tab title="時間">
-          <div class="max-w-2xl mx-auto p-2">
-            <TimeHeatmapChart :id="`js-heatmap-all`" :records="records" />
-            <div class="mt-5">
-              <van-tabs :line-height="1" border>
-                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
-                  <TimeHeatmapChart :id="`js-heatmap-${item.id}`" :records="item.records" />
-                </van-tab>
-              </van-tabs>
-            </div>
+          <div class="max-w-2xl mx-auto px-2">
+            <van-tabs :line-height="1" border>
+              <van-tab title="全部">
+                <TimeHeatmapChart :id="`js-heatmap-all`" :records="records" />
+              </van-tab>
+              <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                <TimeHeatmapChart :id="`js-heatmap-${item.id}`" :records="item.records" />
+              </van-tab>
+            </van-tabs>
           </div>
         </van-tab>
         <van-tab title="影廳">
-          <div class="max-w-2xl mx-auto p-2">
-            <TheaterBarChart :id="`js-theater-bar-all`" :records="records" />
-            <div class="mt-5">
-              <van-tabs :line-height="1" border>
-                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
-                  <TheaterBarChart :id="`js-theater-bar-${item.id}`" :records="item.records" />
-                </van-tab>
-              </van-tabs>
-            </div>
+          <div class="max-w-2xl mx-auto px-2">
+            <van-tabs :line-height="1" border>
+              <van-tab title="全部">
+                <TheaterBarChart :id="`js-theater-bar-all`" :records="records" />
+              </van-tab>
+              <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                <TheaterBarChart :id="`js-theater-bar-${item.id}`" :records="item.records" />
+              </van-tab>
+            </van-tabs>
           </div>
         </van-tab>
         <van-tab title="版本">
-          <div class="max-w-2xl mx-auto p-2">
-            <VersionBarChart :id="`js-version-bar-all`" :records="records" />
-            <div class="mt-5">
-              <van-tabs :line-height="1" border>
-                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
-                  <VersionBarChart :id="`js-version-bar-${item.id}`" :records="item.records" />
-                </van-tab>
-              </van-tabs>
-            </div>
+          <div class="max-w-2xl mx-auto px-2">
+            <van-tabs :line-height="1" border>
+              <van-tab title="全部">
+                <VersionBarChart :id="`js-version-bar-all`" :records="records" />
+              </van-tab>
+              <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                <VersionBarChart :id="`js-version-bar-${item.id}`" :records="item.records" />
+              </van-tab>
+            </van-tabs>
           </div>
         </van-tab>
         <van-tab title="國別">
-          <div class="max-w-2xl mx-auto p-2">
-            <AreaPieChart :id="`js-area-pie-all`" :records="records" />
-            <div class="mt-5">
-              <van-tabs :line-height="1" border>
-                <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
-                  <AreaPieChart :id="`js-area-pie-${item.id}`" :records="item.records" />
-                </van-tab>
-              </van-tabs>
-            </div>
+          <div class="max-w-2xl mx-auto px-2">
+            <van-tabs :line-height="1" border>
+              <van-tab title="全部">
+                <AreaPieChart :id="`js-area-pie-all`" :records="records" />
+              </van-tab>
+              <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
+                <AreaPieChart :id="`js-area-pie-${item.id}`" :records="item.records" />
+              </van-tab>
+            </van-tabs>
           </div>
         </van-tab>
         <van-tab title="多刷">
