@@ -33,10 +33,20 @@ export default defineComponent({
   },
   setup(props) {
     const groupByVersion = computed(() => _groupBy(props.records, (item) => item.version));
+    const arrayByVersion = computed(() =>
+      Object.keys(groupByVersion.value)
+        .map((key) => {
+          return {
+            label: key,
+            data: groupByVersion.value[key].length,
+          };
+        })
+        .sort((a, b) => (a.data < b.data ? 1 : -1))
+    );
 
     const dataset = reactive({
-      data: computed(() => Object.keys(groupByVersion.value).map((version) => groupByVersion.value[version].length)),
-      labels: computed(() => Object.keys(groupByVersion.value).map((version) => version)),
+      data: computed(() => arrayByVersion.value.map((item) => item.data)),
+      labels: computed(() => arrayByVersion.value.map((item) => item.label)),
     });
 
     const versionDetails = reactive<{

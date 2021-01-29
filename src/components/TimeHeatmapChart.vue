@@ -105,9 +105,14 @@ export default defineComponent({
 
       d3.selectAll(`#${props.id} > *`).remove();
       const svg = d3.select(`#${props.id}`);
+
       const svgWidth = (svg?.node() as Element)?.getBoundingClientRect()?.width;
       const chartWidth = svgWidth - margin.left - margin.right;
       const rectWidth = Math.floor(chartWidth / weekdayNames.length);
+
+      if (svgWidth < 0 || chartWidth < 0 || rectWidth < 0) {
+        return;
+      }
 
       const heatMap = svg
         .append('g')
@@ -186,8 +191,7 @@ export default defineComponent({
         .attr('y', (d) => d.hour * rectHeight + rectHeight / 2 + 5)
         .text((d) => (d.value ? d.value : ''))
         .style('font-size', 12)
-        .style('text-shadow', '1px 1px #fff, -1px -1px #fff , 0 -1px #fff, -1px 0 #fff, 1px 0 #fff, 0 1px #fff')
-        .attr('fill', '#000')
+        .attr('fill', (d) => (d.value < 3 ? '#000' : '#fff'))
         .on('click', onClick);
 
       rects

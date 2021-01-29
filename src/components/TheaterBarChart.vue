@@ -40,14 +40,20 @@ export default defineComponent({
   },
   setup(props) {
     const groupByTheater = computed(() => _groupBy(props.records, (item) => item.theater));
+    const arrayByTheater = computed(() =>
+      Object.keys(groupByTheater.value)
+        .map((key) => {
+          return {
+            label: key,
+            data: groupByTheater.value[key].length,
+          };
+        })
+        .sort((a, b) => (a.data < b.data ? 1 : -1))
+    );
 
     const dataset = reactive({
-      data: computed(() =>
-        Object.keys(groupByTheater.value)
-          .map((key) => groupByTheater.value[key].length)
-          .sort((a, b) => (a < b ? 1 : -1))
-      ),
-      labels: computed(() => Object.keys(groupByTheater.value)),
+      data: computed(() => arrayByTheater.value.map((item) => item.data)),
+      labels: computed(() => arrayByTheater.value.map((item) => item.label)),
     });
 
     const theaterDetails = reactive<{
