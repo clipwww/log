@@ -1,7 +1,9 @@
 <template>
   <van-popup v-model:show="show" round position="bottom" :style="{ height: '90%' }" closeable>
     <slot name="title"></slot>
-    <MovieRecordCell v-for="record in records" :record="record" :key="`${record.date}_${record.title}`" />
+    <div class="pb-8 overflow-y-auto h-calc">
+      <MovieRecordCell v-for="record in records" :record="record" :key="`${record.date}_${record.title}`" />
+    </div>
   </van-popup>
 </template>
 
@@ -41,4 +43,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.h-calc {
+  height: calc(100% - 40px);
+}
 </style>
