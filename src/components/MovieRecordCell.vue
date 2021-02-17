@@ -1,7 +1,7 @@
 <template>
   <van-cell center border :size="size">
     <template #title>
-      <div v-if="!hideTitle">
+      <div v-if="!hideTitle" class="font-normal">
         {{ record.title }}
       </div>
     </template>

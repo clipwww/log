@@ -4,39 +4,29 @@
       <svg :id="id" :key="id" :width="62 * rectWidth" :height="10 * rectWidth"></svg>
     </div>
   </div>
-
-  <MovieRecordsPopup v-model:records="dayDetails.records">
-    <template #title>
-      <div class="text-center py-2">{{ formatDate(dayDetails.date, false) }}</div>
-    </template>
-  </MovieRecordsPopup>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed, PropType, watch, nextTick, toRefs, onMounted } from 'vue';
-import _groupBy from 'lodash/groupBy';
+import { defineComponent, PropType, watch, nextTick, onMounted } from 'vue';
 import { dayjs } from '@/plugins/dayjs';
 import * as d3 from 'd3/index';
 
-import { MovieRecordVM } from '@/view-models';
-
-import MovieRecordsPopup from '@/components/MovieRecordsPopup.vue';
-
 export default defineComponent({
-  components: {
-    MovieRecordsPopup,
-  },
   props: {
     id: {
       type: String,
       default: 'js-contribution',
     },
-    records: {
-      type: Array as PropType<MovieRecordVM[]>,
+    range: {
+      type: Array as PropType<number[]>,
+      default: [-1, 0, 1, 2, 3, 4, 5],
+    },
+    contributions: {
+      type: Array as PropType<{ value: number; date: string }[]>,
       required: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const rectWidth = 15;
     const svgPadding = rectWidth + 5;
     const svgFontSize = 12;
@@ -49,51 +39,8 @@ export default defineComponent({
       .map((_, i) => dayjs().weekday(i).format('dd'))
       .filter((_, i) => i % 2 === 1);
 
-    const arrayByDate = computed(() => _groupBy(props.records, (item) => dayjs(item.date).dayOfYear()));
-
-    const state = reactive({
-      contributions: computed(() => {
-        const dayObj = dayjs(props.records[0].date).startOf('year');
-        const days = dayObj.isLeapYear() ? 366 : 365;
-        const emptyBlocks = dayObj.isoWeekday() % 7;
-
-        return Array(emptyBlocks)
-          .fill('')
-          .map(() => {
-            return {
-              date: '',
-              value: -1,
-              records: [] as MovieRecordVM[],
-            };
-          })
-          .concat(
-            Array(days)
-              .fill('')
-              .map((v, i) => {
-                const thisDay = dayObj.add(i, 'day');
-                const count = arrayByDate.value[i + 1]?.length ?? 0;
-                const records = arrayByDate.value[i + 1] || [];
-
-                return {
-                  date: thisDay.toISOString(),
-                  value: count,
-                  records,
-                };
-              })
-          );
-      }),
-    });
-
-    const dayDetails = reactive<{
-      date: string;
-      records: MovieRecordVM[];
-    }>({
-      date: '',
-      records: [],
-    });
-
     watch(
-      () => state.contributions,
+      () => props.contributions,
       async () => {
         await nextTick();
         drawGraph();
@@ -112,10 +59,10 @@ export default defineComponent({
         .attr('class', 'mainChart')
         .attr('transform', `translate(${svgPadding}, ${svgPadding})`);
 
-      const rect = heatMap.selectAll('rect').data(state.contributions);
+      const rect = heatMap.selectAll('rect').data(props.contributions);
       const color = d3
         .scaleQuantile()
-        .domain([-1, 0, 1, 2, 3, 4, 5])
+        .domain(props.range)
         // @ts-ignore
         .range(['#fff', '#eee', '#d6e685', '#8cc665', '#44a340', '#1e6823']);
 
@@ -136,8 +83,9 @@ export default defineComponent({
         .attr('title', (d) => d.date)
         .attr('cursor', (d) => (d.value >= 0 ? 'pointer' : 'initial'))
         .on('click', (e: Event, d) => {
-          dayDetails.date = d.date;
-          dayDetails.records = [...d.records].reverse();
+          if (d.value) {
+            emit('block-click', d);
+          }
         });
 
       svg
@@ -171,16 +119,8 @@ export default defineComponent({
         .style('font-size', svgFontSize);
     }
 
-    function formatDate(date: string) {
-      return dayjs(date).format('YYYY/MM/DD (ddd)');
-    }
-
     return {
-      ...toRefs(state),
       rectWidth,
-      dayDetails,
-
-      formatDate,
     };
   },
 });

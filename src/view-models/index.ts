@@ -8,6 +8,28 @@ export interface MovieRecordVM {
   version: string;
 }
 
+export interface MiSportLogVM {
+  id: string;
+  type: number;
+  starttime: Date;
+  sporttime: number;
+  distance: number;
+  maxpace: number;
+  minpace: number;
+  avgpace: number;
+  calories: number;
+}
+
+export interface MiActivityLogVM {
+  id: string;
+  date: Date;
+  steps: number;
+  distance: number;
+  rundistance: number;
+  calories: number;
+}
+
+
 export enum ResultCode {
   success = '200',
   clientError = '400',

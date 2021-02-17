@@ -1,6 +1,6 @@
 import { ResultListGenericVM } from '@/view-models';
 
-export const requestGET = <T>(url: string): Promise<ResultListGenericVM<T>> => {
+export const requestGET = <T>(type: string): Promise<ResultListGenericVM<T>> => {
   return new Promise((resolve, reject) => {
 
     const xmlHttpReq = new XMLHttpRequest();
@@ -15,7 +15,7 @@ export const requestGET = <T>(url: string): Promise<ResultListGenericVM<T>> => {
     });
     xmlHttpReq.addEventListener("error", (e) => reject(e));
     xmlHttpReq.addEventListener("abort", (e) => reject(e));
-    xmlHttpReq.open("GET", url);
+    xmlHttpReq.open("GET", `https://mechakucha-api.herokuapp.com/my-log/${type}`);
     xmlHttpReq.send();
   })
 }
