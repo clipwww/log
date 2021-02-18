@@ -8,7 +8,9 @@
             <van-cell-group border>
               <template #title>
                 <div class="text-center">{{ item.id }}</div>
-                <div class="mt-3 mb-1"></div>
+                <div class="mt-3 mb-1">
+                  <ActivityDashboard :logs="item.logs" />
+                </div>
               </template>
               <van-cell center border v-for="log in item.logs" :key="log.id">
                 <template #icon>
@@ -118,6 +120,7 @@ import { requestGET } from '@/services';
 import { MiActivityLogVM } from '@/view-models';
 
 import ActivityLineChart from '@/components/Mi/ActivityLineChart.vue';
+import ActivityDashboard from '@/components/Mi/ActivityDashboard.vue';
 
 export default defineComponent({
   components: {
@@ -127,6 +130,7 @@ export default defineComponent({
     VanCellGroup: CellGroup,
     VanSkeleton: Skeleton,
     ActivityLineChart,
+    ActivityDashboard,
   },
   setup() {
     const { state, ready } = useAsyncState(requestGET<MiActivityLogVM>('mi/activity'), {

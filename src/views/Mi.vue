@@ -1,6 +1,10 @@
 <template>
   <div class="pb-16">
-    <router-view />
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
 
     <van-tabbar class="border-t" route fixed safe-area-inset-bottom>
       <van-tabbar-item class="bg-gray-200" :to="{ name: 'MiSport' }">Sport</van-tabbar-item>
