@@ -122,7 +122,7 @@ export default defineComponent({
         .attr('stroke-width', '2px')
         .style('fill', '#eee')
         .attr('cursor', (d) => (d.value >= 0 ? 'pointer' : 'initial'))
-        .on('click', (d) => emit('block-click', d));
+        .on('click', (e, d) => emit('block-click', d));
 
       heatMap
         .append('g')
@@ -135,7 +135,7 @@ export default defineComponent({
         .text((d) => (d.value ? d.value : ''))
         .style('font-size', 12)
         .attr('fill', (d) => (d.value < 3 ? '#000' : '#fff'))
-        .on('click', (d) => emit('block-click', d));
+        .on('click', (e, d) => emit('block-click', d));
 
       rects
         .transition()

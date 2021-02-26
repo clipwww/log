@@ -1,7 +1,7 @@
 <template>
   <TimeHeatmapChart :id="id" :dataset="dataset" @block-click="onClick" />
 
-  <MovieRecordsPopup v-model:records="dayDetails.records" @block-click="onClick">
+  <MovieRecordsPopup v-model:records="dayDetails.records">
     <template #title>
       <div class="text-center py-2">
         <div>{{ formatWeekDay(dayDetails.weekday) }} {{ formatHour(dayDetails.hour) }}</div>
@@ -78,7 +78,7 @@ export default defineComponent({
       return dayObj.hour(hour).format('HH:mm') + '~' + dayObj.hour(hour + 1).format('HH:mm');
     }
 
-    function onClick(e: Event, d: { weekday: number; hour: number; value: number; records: MovieRecordVM[] }) {
+    function onClick(d: { weekday: number; hour: number; value: number; records: MovieRecordVM[] }) {
       dayDetails.weekday = d.weekday;
       dayDetails.hour = d.hour;
       dayDetails.records = d.records;
