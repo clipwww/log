@@ -2,7 +2,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/log/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? 'https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/' : '/',
   devServer: {
     disableHostCheck: true,
   },
