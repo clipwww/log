@@ -11,8 +11,8 @@ export interface MovieRecordVM {
 export interface MiSportLogVM {
   id: string;
   type: number;
-  starttime: Date;
-  sporttime: number;
+  startTime: Date;
+  sporTtime: number;
   distance: number;
   maxpace: number;
   minpace: number;

@@ -16,9 +16,9 @@
                   <van-cell center border v-for="log in item.logs" :key="log.id">
                     <template #icon>
                       <div class="text-center pl-2 pr-5 border-r w-20">
-                        <div class="text-xs text-gray-500">{{ formatDate(log.starttime, 'YYYY') }}</div>
-                        <div class="text-gray-700 mb-1">{{ formatDate(log.starttime, 'MMMM') }}</div>
-                        <div class="font-bold text-lg">{{ formatDate(log.starttime, 'D') }}</div>
+                        <div class="text-xs text-gray-500">{{ formatDate(log.startTime, 'YYYY') }}</div>
+                        <div class="text-gray-700 mb-1">{{ formatDate(log.startTime, 'MMMM') }}</div>
+                        <div class="font-bold text-lg">{{ formatDate(log.startTime, 'D') }}</div>
                       </div>
                     </template>
 
@@ -48,9 +48,9 @@
                             <span>時間</span>
                           </div>
                           <div class="text-center mt-1">
-                            <span class="text-2xl font-bold mr-1">{{ formatSportTime(log.sporttime).m }}</span>
+                            <span class="text-2xl font-bold mr-1">{{ formatSportTime(log.sportTime).m }}</span>
                             <span class="text-gray-500 mr-1">m</span>
-                            <span class="text-2xl font-bold mr-1">{{ formatSportTime(log.sporttime).s }}</span>
+                            <span class="text-2xl font-bold mr-1">{{ formatSportTime(log.sportTime).s }}</span>
                             <span class="text-gray-500 mr-1">s</span>
                           </div>
                         </div>
@@ -132,8 +132,9 @@ export default defineComponent({
     const logs: Ref<MiSportLogVM[]> = computed(() => state.value.items);
     const arrayByYear = computed(() => {
       const group = _groupBy(logs.value, (item) => {
-        return dayjs(item.starttime).year();
+        return dayjs(item.startTime).year();
       });
+      console.log(group);
 
       return Object.keys(group)
         .sort((a, b) => (+a > +b ? -1 : 1))

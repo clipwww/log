@@ -28,7 +28,7 @@ export default defineComponent({
   setup(props) {
     const dataset = computed(() => {
       const groupByWeekday = _groupBy(props.logs, (item) => {
-        return dayjs(item.starttime).weekday();
+        return dayjs(item.startTime).weekday();
       });
 
       const dataset: { weekday: number; hour: number; value: number; logs: MiSportLogVM[] }[] = [];
@@ -39,7 +39,7 @@ export default defineComponent({
             .fill('')
             .forEach((_, i) => {
               const logs = groupByWeekday[weekday]?.filter((item) =>
-                dayjs(item.starttime).isSame(dayjs(item.starttime).hour(i), 'hour')
+                dayjs(item.startTime).isSame(dayjs(item.startTime).hour(i), 'hour')
               );
               const value = logs?.length ?? 0;
               dataset.push({ weekday: +weekday, hour: i, value, logs });

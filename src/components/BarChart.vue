@@ -91,6 +91,14 @@ export default defineComponent({
                 },
               },
             ],
+            xAxes: [
+              {
+                ticks: {
+                  min: 0,
+                  stepSize: 1,
+                },
+              },
+            ],
           },
           plugins: {
             datalabels: {

@@ -26,11 +26,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const groupByDate = computed(() => _groupBy(props.logs, (item) => dayjs(item.starttime).dayOfYear()));
+    const groupByDate = computed(() => _groupBy(props.logs, (item) => dayjs(item.startTime).dayOfYear()));
 
     const state = reactive({
       contributions: computed(() => {
-        const dayObj = dayjs(props.logs[0].starttime).startOf('year');
+        const dayObj = dayjs(props.logs[0].startTime).startOf('year');
         const days = dayObj.isLeapYear() ? 366 : 365;
         const emptyBlocks = dayObj.isoWeekday() % 7;
 
