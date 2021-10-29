@@ -4,8 +4,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/404.html"
   },
   {
-    "revision": "69674e778003a63a23f7",
-    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/app.4e9fce3a.css"
+    "revision": "48415deaee9fce439b03",
+    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/app.d6e5a381.css"
   },
   {
     "revision": "3fcd60560e21990c5ea0",
@@ -24,20 +24,20 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/movie.301a1ce2.css"
   },
   {
-    "revision": "dc3a8f3d3ded4e62cdc5a3980bd17251",
+    "revision": "d1a81af27dbcffb66735f32aad823130",
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/index.html"
   },
   {
-    "revision": "69674e778003a63a23f7",
-    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/app.8bd3fb43.js"
+    "revision": "48415deaee9fce439b03",
+    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/app.0bdb0065.js"
   },
   {
     "revision": "3fcd60560e21990c5ea0",
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/chunk-vendors.cfc22384.js"
   },
   {
-    "revision": "b11fa205cb2258c681f2",
-    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/mi-sport.77738d9a.js"
+    "revision": "b52554ede0160632ce3f",
+    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/mi-sport.048e1463.js"
   },
   {
     "revision": "28e7ab86a77e276118a6",
