@@ -12,19 +12,33 @@
                     <div class="mt-3 mb-1">
                       <SportContributionChart :id="`js-contribution-${item.id}`" :key="item.id" :logs="item.logs" />
                     </div>
+                    <div class="text-center mt-4 text-gray-500">
+                      <div class="mb-1">
+                        累積時數:
+                        <span>{{ getAllSportTime(item.logs).h }}</span>
+                        <span class="ml-1 mr-2">時</span>
+                        <span>{{ getAllSportTime(item.logs).m }}</span>
+                        <span class="ml-1 mr-2">分</span>
+                        <span>{{ getAllSportTime(item.logs).s }}</span>
+                        <span class="ml-1 mr-2">秒</span>
+                      </div>
+                      <div>累積消耗熱量: {{ getAllCalories(item.logs) }} kcal</div>
+                    </div>
                   </template>
+
                   <van-cell center border v-for="log in item.logs" :key="log.id">
                     <template #icon>
                       <div class="text-center pl-2 pr-5 border-r w-20">
                         <div class="text-xs text-gray-500">{{ formatDate(log.startTime, 'YYYY') }}</div>
                         <div class="text-gray-700 mb-1">{{ formatDate(log.startTime, 'MMMM') }}</div>
-                        <div class="font-bold text-lg">{{ formatDate(log.startTime, 'D') }}</div>
+                        <div class="font-bold text-xl">{{ formatDate(log.startTime, 'D') }}</div>
                       </div>
                     </template>
 
                     <template #title>
                       <div class="text-center">
                         <span class="text-xs">{{ formatType(log.type) }}</span>
+                        <span class="text-xs ml-2">{{ formatDate(log.startTime, 'HH:mm:ss') }}</span>
                       </div>
                       <div class="flex items-center justify-around">
                         <div class="flex flex-col items-center justify-center px-2">
@@ -167,12 +181,33 @@ export default defineComponent({
       }
     }
 
+    function getAllSportTime(logs: MiSportLogVM[]) {
+      const totalTitme = logs.reduce((sum, cur) => (sum += cur.sportTime), 0);
+
+      const minMilliseconds = 60;
+      const hourMilliseconds = minMilliseconds * 60;
+
+      const s = Math.floor(totalTitme % 60);
+      const m = Math.floor((totalTitme / minMilliseconds) % 60);
+      const h = Math.floor(totalTitme / hourMilliseconds);
+
+      return {
+        h,
+        m: `${m}`.padStart(2, '0'),
+        s: `${s}`.padStart(2, '0'),
+      };
+    }
+
+    function getAllCalories(logs: MiSportLogVM[]) {
+      return logs.reduce((sum, cur) => (sum += cur.calories), 0);
+    }
+
     function formatSportTime(time: number) {
       const m = Math.floor(time / 60);
       const s = time - m * 60;
       return {
         m,
-        s,
+        s: `${s}`.padStart(2, '0'),
       };
     }
 
@@ -184,6 +219,8 @@ export default defineComponent({
       formatDate,
       formatType,
       formatSportTime,
+      getAllSportTime,
+      getAllCalories,
     };
   },
 });

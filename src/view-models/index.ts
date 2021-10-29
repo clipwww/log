@@ -12,7 +12,7 @@ export interface MiSportLogVM {
   id: string;
   type: number;
   startTime: Date;
-  sporTtime: number;
+  sportTime: number;
   distance: number;
   maxpace: number;
   minpace: number;
