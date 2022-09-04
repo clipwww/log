@@ -4,15 +4,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/404.html"
   },
   {
-    "revision": "48415deaee9fce439b03",
-    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/app.d6e5a381.css"
+    "revision": "124e73671b6c83345ccf",
+    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/app.dc11d7d1.css"
   },
   {
     "revision": "3fcd60560e21990c5ea0",
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/chunk-vendors.c10d9ec1.css"
   },
   {
-    "revision": "28e7ab86a77e276118a6",
+    "revision": "12ea2e539cc0ce0552ba",
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/mi-sport~movie.961dc906.css"
   },
   {
@@ -24,12 +24,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/css/movie.301a1ce2.css"
   },
   {
-    "revision": "d1a81af27dbcffb66735f32aad823130",
+    "revision": "f126e7a36bd20cef9942b59a89066431",
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/index.html"
   },
   {
-    "revision": "48415deaee9fce439b03",
-    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/app.0bdb0065.js"
+    "revision": "124e73671b6c83345ccf",
+    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/app.62018b5a.js"
   },
   {
     "revision": "3fcd60560e21990c5ea0",
@@ -40,8 +40,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/mi-sport.048e1463.js"
   },
   {
-    "revision": "28e7ab86a77e276118a6",
-    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/mi-sport~movie.15f228f6.js"
+    "revision": "12ea2e539cc0ce0552ba",
+    "url": "https://cdn.jsdelivr.net/gh/clipwww/log@gh-pages/js/mi-sport~movie.abe75f77.js"
   },
   {
     "revision": "e0c30deeb87833050aed",
