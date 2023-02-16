@@ -9,7 +9,7 @@
 <script lang="ts">
 import { defineComponent, PropType, watch, nextTick, onMounted } from 'vue';
 import { dayjs } from '@/plugins/dayjs';
-import * as d3 from 'd3/index';
+import * as d3 from 'd3';
 
 export default defineComponent({
   props: {
@@ -19,7 +19,7 @@ export default defineComponent({
     },
     range: {
       type: Array as PropType<number[]>,
-      default: [-1, 0, 1, 2, 3, 4, 5],
+      default: () => ([-1, 0, 1, 2, 3, 4, 5]),
     },
     contributions: {
       type: Array as PropType<{ value: number; date: string }[]>,
@@ -63,7 +63,6 @@ export default defineComponent({
       const color = d3
         .scaleQuantile()
         .domain(props.range)
-        // @ts-ignore
         .range(['#fff', '#eee', '#d6e685', '#8cc665', '#44a340', '#1e6823']);
 
       rect

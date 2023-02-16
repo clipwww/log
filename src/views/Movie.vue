@@ -1,6 +1,6 @@
 <template>
-  <div :class="ready ? 'pb-16' : 'py-4'">
-    <van-skeleton title :row="10" :loading="!ready" round>
+  <div :class="isReady ? 'pb-16' : 'py-4'">
+    <van-skeleton title :row="10" :loading="!isReady" round>
       <van-tabs v-model:active="activeTab" sticky border>
         <van-tab title="資料" name="data">
           <div class="text-center my-2">
@@ -159,7 +159,7 @@ export default defineComponent({
     MovieLineChart,
   },
   setup() {
-    const { state, ready } = useAsyncState(requestGET<MovieRecordVM>('movie'), {
+    const { state, isReady } = useAsyncState(requestGET<MovieRecordVM>('movie'), {
       success: false,
       resultMessage: '',
       resultCode: '',
@@ -207,7 +207,7 @@ export default defineComponent({
     });
 
     return {
-      ready,
+      isReady,
       activeTab,
       activeCollapse,
       records,

@@ -11,7 +11,8 @@ module.exports = {
     "@vue/prettier/@typescript-eslint"
   ],
   parserOptions: {
-    ecmaVersion: 2020
+    ecmaVersion: 2020,
+    parser: '@typescript-eslint/parser'
   },
   rules: {
     "no-console": [
@@ -23,7 +24,7 @@ module.exports = {
     "no-explicit-any": "off",
     "no-useless-escape": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/no-use-before-define": "off"
+    "@typescript-eslint/no-use-before-define": "off",
+    "vue/multi-word-component-names": "off"
   }
 };

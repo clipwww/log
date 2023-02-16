@@ -1,6 +1,6 @@
 <template>
-  <div :class="ready ? '' : 'py-4'">
-    <van-skeleton title :row="10" :loading="!ready" round>
+  <div :class="isReady ? '' : 'py-4'">
+    <van-skeleton title :row="10" :loading="!isReady" round>
       <ActivityLineChart :logs="logs" />
       <van-tabs :line-height="1" sticky border>
         <van-tab v-for="item in arrayByYear" :title="`${item.id}`" :key="item.id">
@@ -113,9 +113,10 @@
 import { computed, defineComponent, Ref } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 import { Cell, CellGroup, Skeleton, Tabs, Tab } from 'vant';
-import { dayjs } from '@/plugins/dayjs';
 import _groupBy from 'lodash/groupBy';
+import { ConfigType } from 'dayjs'
 
+import { dayjs } from '@/plugins/dayjs';
 import { requestGET } from '@/services';
 import { MiActivityLogVM } from '@/view-models';
 
@@ -133,7 +134,7 @@ export default defineComponent({
     ActivityDashboard,
   },
   setup() {
-    const { state, ready } = useAsyncState(requestGET<MiActivityLogVM>('mi/activity'), {
+    const { state, isReady } = useAsyncState(requestGET<MiActivityLogVM>('mi/activity'), {
       success: false,
       resultMessage: '',
       resultCode: '',
@@ -157,12 +158,12 @@ export default defineComponent({
         });
     });
 
-    function formatDate(date: string, format: string) {
+    function formatDate(date: ConfigType, format: string) {
       return dayjs(date).format(format);
     }
 
     return {
-      ready,
+      isReady,
       arrayByYear,
       logs,
 

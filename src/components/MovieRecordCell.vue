@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Cell, Tag } from 'vant';
+import { Cell, Tag, CellSize } from 'vant';
 
 import { dayjs } from '@/plugins/dayjs';
 import { MovieRecordVM } from '@/view-models';
@@ -45,7 +45,7 @@ export default defineComponent({
       default: 'YYYY/MM/DD HH:mm',
     },
     size: {
-      type: String,
+      type: String as PropType<CellSize>,
       default: 'large',
     },
     hideTitle: {

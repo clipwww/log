@@ -1,6 +1,6 @@
 <template>
-  <div :class="ready ? '' : 'py-4'">
-    <van-skeleton title :row="10" :loading="!ready" round>
+  <div :class="isReady ? '' : 'py-4'">
+    <van-skeleton title :row="10" :loading="!isReady" round>
       <van-tabs type="card" :offset-top="5" sticky>
         <van-tab title="資料">
           <van-tabs :offset-top="35" :line-height="1" sticky border>
@@ -115,9 +115,10 @@
 import { computed, defineComponent, Ref } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 import { Cell, CellGroup, Skeleton, Tabs, Tab } from 'vant';
-import { dayjs } from '@/plugins/dayjs';
 import _groupBy from 'lodash/groupBy';
+import { ConfigType } from 'dayjs'
 
+import { dayjs } from '@/plugins/dayjs';
 import { requestGET } from '@/services';
 import { MiSportLogVM } from '@/view-models';
 
@@ -135,7 +136,7 @@ export default defineComponent({
     SportTimeHeatmapChart,
   },
   setup() {
-    const { state, ready } = useAsyncState(requestGET<MiSportLogVM>('mi/sport'), {
+    const { state, isReady } = useAsyncState(requestGET<MiSportLogVM>('mi/sport'), {
       success: false,
       resultMessage: '',
       resultCode: '',
@@ -160,7 +161,7 @@ export default defineComponent({
         });
     });
 
-    function formatDate(date: string, format: string) {
+    function formatDate(date: ConfigType, format: string) {
       return dayjs(date).format(format);
     }
 
@@ -212,7 +213,7 @@ export default defineComponent({
     }
 
     return {
-      ready,
+      isReady,
       arrayByYear,
       logs,
 

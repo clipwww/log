@@ -95,12 +95,13 @@ export default defineComponent({
               },
             },
           },
-          onClick(event, element) {
+          onClick(event, element: any) {
             const index = element?.[0]?.['_index'];
             const label = element?.[0]?.['_view']?.['label'];
             if (isNaN(index)) {
               return;
             }
+            console.log(event)
 
             emit('pie-click', {
               index,

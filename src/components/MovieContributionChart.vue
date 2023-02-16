@@ -3,7 +3,7 @@
 
   <MovieRecordsPopup v-model:records="dayDetails.records">
     <template #title>
-      <div class="text-center py-2">{{ formatDate(dayDetails.date, false) }}</div>
+      <div class="text-center py-2">{{ formatDate(dayDetails.date) }}</div>
     </template>
   </MovieRecordsPopup>
 </template>

@@ -6,6 +6,7 @@ export interface MovieRecordVM {
   area: string;
   theater: string;
   version: string;
+  memo: string;
 }
 
 export interface MiSportLogVM {

@@ -50,14 +50,14 @@ export default defineComponent({
         //   backgroundColor: colors[0],
         //   fill: false,
         // },
-        // {
-        //   type: 'line',
-        //   label: '總票數',
-        //   data: arrayByYear.value.map((item) => item.records.reduce((total, item) => (total += item.tickets), 0)),
-        //   borderColor: colors[3],
-        //   backgroundColor: colors[3],
-        //   fill: false,
-        // },
+        {
+          type: 'line',
+          label: '總票數',
+          data: arrayByYear.value.map((item) => item.records.reduce((total, item) => (total += item.tickets), 0)),
+          borderColor: colors[3],
+          backgroundColor: colors[3],
+          fill: false,
+        },
         {
           type: 'line',
           label: '總場數',
@@ -95,7 +95,7 @@ export default defineComponent({
         // },
       ];
     });
-    const labels = computed(() => arrayByYear.value.map((item) => item.id));
+    const labels = computed(() => arrayByYear.value.map((item) => `${item.id}`));
 
     return {
       datasets,

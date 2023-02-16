@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType, watch, nextTick, onMounted } from 'vue';
 import { dayjs } from '@/plugins/dayjs';
-import * as d3 from 'd3/index';
+import * as d3 from 'd3';
 import { useWindowSize, useDebounceFn } from '@vueuse/core';
 
 export default defineComponent({
@@ -92,7 +92,6 @@ export default defineComponent({
       const yAxis = d3
         .axisLeft(timeScale)
         .ticks(hourEnd - hourStart)
-        // @ts-ignore
         .tickFormat(d3.timeFormat('%H:%M'));
 
       heatMap.append('g').attr('class', 'timeLabel').call(yAxis);
@@ -100,7 +99,6 @@ export default defineComponent({
       const color = d3
         .scaleQuantile()
         .domain([0, 8])
-        // @ts-ignore
         .range(['#eee', '#d6e685', '#8cc665', '#44a340', '#1e6823', '#18541c', '#134016', '#0d2d0f']);
 
       const rects = heatMap
