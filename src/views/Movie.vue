@@ -2,7 +2,7 @@
   <div :class="isReady ? 'pb-16' : 'py-4'">
     <van-skeleton title :row="10" :loading="!isReady" round>
       <van-tabs v-model:active="activeTab" sticky border>
-        <van-tab title="資料" name="data">
+        <van-tab title="資料" name="data" :to="{ query: { tab: 'data' } }">
           <div class="text-center my-2">
             <TotalAnalytics :records="records" />
           </div>
@@ -27,7 +27,7 @@
             </van-tab>
           </van-tabs>
         </van-tab>
-        <van-tab title="場數" name="frequency">
+        <van-tab title="場數" name="frequency" :to="{ query: { tab: 'frequency' } }">
           <div class="max-w-2xl mx-auto px-2">
             <van-tabs :line-height="1" border>
               <van-tab title="全部">
@@ -42,7 +42,7 @@
             </van-tabs>
           </div>
         </van-tab>
-        <van-tab title="時間" name="time">
+        <van-tab title="時間" name="time" :to="{ query: { tab: 'time' } }">
           <div class="max-w-2xl mx-auto px-2">
             <van-tabs :line-height="1" border>
               <van-tab title="全部">
@@ -54,7 +54,7 @@
             </van-tabs>
           </div>
         </van-tab>
-        <van-tab title="影廳" name="theater">
+        <van-tab title="影廳" name="theater" :to="{ query: { tab: 'theater' } }">
           <div class="max-w-2xl mx-auto px-2">
             <van-tabs :line-height="1" border>
               <van-tab title="全部">
@@ -66,7 +66,7 @@
             </van-tabs>
           </div>
         </van-tab>
-        <van-tab title="版本" name="version">
+        <van-tab title="版本" name="version" :to="{ query: { tab: 'version' } }">
           <div class="max-w-2xl mx-auto px-2">
             <van-tabs :line-height="1" border>
               <van-tab title="全部">
@@ -78,7 +78,7 @@
             </van-tabs>
           </div>
         </van-tab>
-        <van-tab title="國別" name="area">
+        <van-tab title="國別" name="area" :to="{ query: { tab: 'area' } }">
           <div class="max-w-2xl mx-auto px-2">
             <van-tabs :line-height="1" border>
               <van-tab title="全部">
@@ -90,7 +90,7 @@
             </van-tabs>
           </div>
         </van-tab>
-        <van-tab title="多刷" name="secondtime">
+        <van-tab title="多刷" name="secondtime" :to="{ query: { tab: 'secondtime' } }">
           <div class="max-w-2xl mx-auto">
             <van-collapse v-model="activeCollapse" accordion>
               <van-collapse-item v-for="item in arrayByTitle" :key="item.title" :name="item.title">
@@ -119,11 +119,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, Ref, ref } from 'vue';
+import { computed, defineComponent, Ref, ref, watchEffect } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 import _groupBy from 'lodash/groupBy';
 import { dayjs, formatDate } from '@/plugins/dayjs';
 import { Tabs, Tab, Skeleton, CellGroup, Collapse, CollapseItem, Tag } from 'vant';
+import { useRoute } from 'vue-router';
+import { useTitle } from '@vueuse/core'
 
 import { requestGET } from '@/services';
 import { MovieRecordVM } from '@/view-models';
@@ -159,6 +161,9 @@ export default defineComponent({
     MovieLineChart,
   },
   setup() {
+    const route = useRoute()
+    const title = useTitle()
+
     const { state, isReady } = useAsyncState(requestGET<MovieRecordVM>('movie'), {
       success: false,
       resultMessage: '',
@@ -167,7 +172,7 @@ export default defineComponent({
       items: [],
     });
 
-    const activeTab = ref('data');
+    const activeTab = ref(route.query.tab?.toString() || 'data');
     const activeCollapse = ref('');
     const filterYear = ref(dayjs().year());
     const records: Ref<MovieRecordVM[]> = computed(() => state.value.items);
@@ -205,6 +210,10 @@ export default defineComponent({
         .filter((item) => item.count > 1)
         .sort((a, b) => (a.count > b.count ? -1 : 1));
     });
+
+    watchEffect(() => {
+      title.value = `Log | Movie | ${activeTab.value}`
+    })
 
     return {
       isReady,

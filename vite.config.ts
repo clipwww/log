@@ -16,6 +16,10 @@ export default ({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    define: {
+      __PKG_NAME__: JSON.stringify(process.env.npm_package_name),
+      __PKG_VERSION__: JSON.stringify(process.env.npm_package_version),
+    },
     esbuild: isDev ? {} : {
       drop: ['debugger'],
       pure: ['console.log'],

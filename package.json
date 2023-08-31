@@ -1,6 +1,6 @@
 {
   "name": "log",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -21,6 +21,7 @@
     "vant": "^4.0.10",
     "vite": "^4.1.1",
     "vue": "^3.2.47",
+    "vue-gtag": "^2.0.1",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
