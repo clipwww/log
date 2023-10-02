@@ -1,1 +1,0 @@
-import{az as l,aA as p,aB as n,w as e}from"./index-dc243494.js";function P(o,{args:t=[],done:s,canceled:a}){if(o){const i=o.apply(null,t);l(i)?i.then(f=>{f?s():a&&a()}).catch(p):i?s():a&&a()}else s()}const u=Symbol();function c(o){const t=n(u,null);t&&e(t,s=>{s&&o()})}export{u as P,P as c,c as o};
