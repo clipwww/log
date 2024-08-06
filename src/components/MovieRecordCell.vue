@@ -1,5 +1,8 @@
 <template>
   <van-cell center border :size="size">
+    <template v-if="index" #icon>
+      <span class="mr-3 bg-gray-100 rounded-full w-7 h-7 text-xs flex items-center justify-center font-medium">{{ index }}</span>
+    </template>
     <template #title>
       <div v-if="!hideTitle" class="font-normal">
         {{ record.title }}
@@ -52,6 +55,7 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    index: { type: Number }
   },
   setup(props) {
     function formatDateTime(date: string | Date) {

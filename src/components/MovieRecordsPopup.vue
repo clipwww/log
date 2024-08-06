@@ -2,7 +2,11 @@
   <van-popup v-model:show="show" round position="bottom" :style="{ height: '90%' }" closeable>
     <slot name="title"></slot>
     <div class="pb-8 overflow-y-auto h-calc">
-      <MovieRecordCell v-for="record in records" :record="record" :key="`${record.date}_${record.title}`" />
+      <MovieRecordCell 
+        v-for="(record, idx) in records" 
+        :record="record" 
+        :index="records.length - idx" 
+        :key="`${record.date}_${record.title}`" />
     </div>
   </van-popup>
 </template>
