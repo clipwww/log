@@ -1,17 +1,20 @@
 {
   "name": "log",
+  "type": "module",
   "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "eslint . --fix"
   },
   "dependencies": {
     "@vant/touch-emulator": "^1.2.0",
-    "@vitejs/plugin-vue": "^4.0.0",
-    "@vueuse/core": "^9.12.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vueuse/core": "^11.0.0",
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "d3": "^7.8.2",
@@ -19,28 +22,23 @@
     "lodash": "^4.17.21",
     "register-service-worker": "^1.7.2",
     "vant": "^4.0.10",
-    "vite": "^4.1.1",
-    "vue": "^3.2.47",
+    "vite": "^7.0.0",
+    "vue": "^3.5.0",
     "vue-gtag": "^2.0.1",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.16.2",
     "@types/chart.js": "^2.9.37",
     "@types/d3": "^7.4.0",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^18.13.0",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "@vue/eslint-config-prettier": "^7.0.0",
-    "@vue/eslint-config-typescript": "^11.0.2",
-    "autoprefixer": "^10.4.13",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-vue": "^9.9.0",
-    "postcss": "^8.4.21",
-    "prettier": "^2.4.1",
-    "sass": "^1.32.5",
-    "tailwindcss": "^3.2.6",
-    "typescript": "~4.5.5"
+    "@types/node": "^20.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.0.0",
+    "eslint-plugin-format": "^1.0.1",
+    "postcss": "^8.4.47",
+    "sass": "^1.80.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "~5.6.0"
   }
 }

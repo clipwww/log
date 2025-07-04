@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import type { Exception, GtagEvent } from 'vue-gtag'
+
 import VueGtag, { event, exception } from 'vue-gtag'
 
 import router from '@/router'

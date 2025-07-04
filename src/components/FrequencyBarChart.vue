@@ -1,21 +1,15 @@
-<template>
-  <BarChart :id="id" :data="data" :labels="labels" @bar-click="onClick" />
-  <MovieRecordsPopup v-model:records="showRecords">
-    <template #title>
-      <div class="text-center py-2">{{ showMonth }}月</div>
-    </template>
-  </MovieRecordsPopup>
-</template>
-
 <script lang="ts">
-import { defineComponent, PropType, computed, reactive, toRefs, ref, Ref } from 'vue';
-import _groupBy from 'lodash/groupBy';
+import type { PropType, Ref } from 'vue'
 
-import { dayjs } from '@/plugins/dayjs';
-import { MovieRecordVM } from '@/view-models';
+import _groupBy from 'lodash/groupBy'
+import { computed, defineComponent, reactive, ref, toRefs } from 'vue'
 
-import BarChart from './BarChart.vue';
-import MovieRecordsPopup from './MovieRecordsPopup.vue';
+import type { MovieRecordVM } from '@/view-models'
+
+import { dayjs } from '@/plugins/dayjs'
+
+import BarChart from './BarChart.vue'
+import MovieRecordsPopup from './MovieRecordsPopup.vue'
 
 export default defineComponent({
   components: {
@@ -33,13 +27,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const months = Array(12)
+    const months = Array.from({ length: 12 })
       .fill('')
-      .map((_, i) => i);
+      .map((_, i) => i)
 
-    const showMonth: Ref<number> = ref(0);
-    const showRecords: Ref<MovieRecordVM[]> = ref([]);
-    const groupByMonth = computed(() => _groupBy(props.records, (item) => dayjs(item.date).month()));
+    const showMonth: Ref<number> = ref(0)
+    const showRecords: Ref<MovieRecordVM[]> = ref([])
+    const groupByMonth = computed(() => _groupBy(props.records, item => dayjs(item.date).month()))
 
     const dataset = reactive({
       data: computed(() => {
@@ -47,16 +41,16 @@ export default defineComponent({
           return {
             month: +key,
             value: groupByMonth.value[key].length,
-          };
-        });
-        return months.map((m) => obj.find((item) => item.month === m)?.value ?? 0);
+          }
+        })
+        return months.map(m => obj.find(item => item.month === m)?.value ?? 0)
       }),
-      labels: months.map((m) => dayjs().month(m).format('MMM')),
-    });
+      labels: months.map(m => dayjs().month(m).format('MMM')),
+    })
 
     function onClick({ index }: { index: number }) {
-      showMonth.value = index + 1;
-      showRecords.value = groupByMonth.value[index];
+      showMonth.value = index + 1
+      showRecords.value = groupByMonth.value[index]
     }
 
     return {
@@ -65,10 +59,26 @@ export default defineComponent({
       showRecords,
 
       onClick,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <BarChart
+    :id="id"
+    :data="data"
+    :labels="labels"
+    @bar-click="onClick"
+  />
+  <MovieRecordsPopup v-model:records="showRecords">
+    <template #title>
+      <div class="text-center py-2">
+        {{ showMonth }}月
+      </div>
+    </template>
+  </MovieRecordsPopup>
+</template>
 
 <style lang="scss" scoped>
 </style>

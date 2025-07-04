@@ -1,15 +1,6 @@
-<template>
-  <div class="py-2 bg-gray-200 min-h-screen">
-    <van-grid :column-num="2" :gutter="8" border>
-      <van-grid-item icon="photo-o" text="看電影紀錄" :to="{ name: 'Movie' }" />
-      <van-grid-item icon="photo-o" text="小米手環紀錄" :to="{ name: 'Mi' }" />
-    </van-grid>
-  </div>
-</template>
-
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { Grid, GridItem } from 'vant';
+import { Grid, GridItem } from 'vant'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   components: {
@@ -17,10 +8,19 @@ export default defineComponent({
     VanGridItem: GridItem,
   },
   setup() {
-    return {};
+    return {}
   },
-});
+})
 </script>
+
+<template>
+  <div class="py-2 bg-gray-200 min-h-screen">
+    <VanGrid :column-num="2" :gutter="8" border>
+      <VanGridItem icon="photo-o" text="看電影紀錄" :to="{ name: 'Movie' }" />
+      <VanGridItem icon="photo-o" text="小米手環紀錄" :to="{ name: 'Mi' }" />
+    </VanGrid>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 </style>

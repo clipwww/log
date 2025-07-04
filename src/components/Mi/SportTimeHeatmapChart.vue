@@ -1,15 +1,13 @@
-<template>
-  <TimeHeatmapChart :id="id" :dataset="dataset" />
-</template>
-
 <script lang="ts">
-import { defineComponent, computed, PropType } from 'vue';
-import _groupBy from 'lodash/groupBy';
-import { dayjs, formatDate } from '@/plugins/dayjs';
+import type { PropType } from 'vue'
 
-import { MiSportLogVM } from '@/view-models';
+import _groupBy from 'lodash/groupBy'
+import { computed, defineComponent } from 'vue'
 
-import TimeHeatmapChart from '@/components/TimeHeatmapChart.vue';
+import type { MiSportLogVM } from '@/view-models'
+
+import TimeHeatmapChart from '@/components/TimeHeatmapChart.vue'
+import { dayjs, formatDate } from '@/plugins/dayjs'
 
 export default defineComponent({
   components: {
@@ -28,34 +26,34 @@ export default defineComponent({
   setup(props) {
     const dataset = computed(() => {
       const groupByWeekday = _groupBy(props.logs, (item) => {
-        return dayjs(item.startTime).weekday();
-      });
+        return dayjs(item.startTime).weekday()
+      })
 
-      const dataset: { weekday: number; hour: number; value: number; logs: MiSportLogVM[] }[] = [];
-      Array(7)
+      const dataset: { weekday: number, hour: number, value: number, logs: MiSportLogVM[] }[] = []
+      Array.from({ length: 7 })
         .fill('')
         .forEach((_, weekday) => {
-          Array(24)
+          Array.from({ length: 24 })
             .fill('')
             .forEach((_, i) => {
-              const logs = groupByWeekday[weekday]?.filter((item) =>
-                dayjs(item.startTime).isSame(dayjs(item.startTime).hour(i), 'hour')
-              );
-              const value = logs?.length ?? 0;
-              dataset.push({ weekday: +weekday, hour: i, value, logs });
-            });
-        });
+              const logs = groupByWeekday[weekday]?.filter(item =>
+                dayjs(item.startTime).isSame(dayjs(item.startTime).hour(i), 'hour'),
+              )
+              const value = logs?.length ?? 0
+              dataset.push({ weekday: +weekday, hour: i, value, logs })
+            })
+        })
 
-      return dataset;
-    });
+      return dataset
+    })
 
     function formatWeekDay(weekday: number) {
-      return dayjs().weekday(weekday).format('ddd');
+      return dayjs().weekday(weekday).format('ddd')
     }
 
     function formatHour(hour: number) {
-      const dayObj = dayjs().startOf('day');
-      return dayObj.hour(hour).format('HH:mm') + '~' + dayObj.hour(hour + 1).format('HH:mm');
+      const dayObj = dayjs().startOf('day')
+      return `${dayObj.hour(hour).format('HH:mm')}~${dayObj.hour(hour + 1).format('HH:mm')}`
     }
 
     return {
@@ -64,10 +62,14 @@ export default defineComponent({
       formatDate,
       formatWeekDay,
       formatHour,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <TimeHeatmapChart :id="id" :dataset="dataset" />
+</template>
 
 <style lang="scss" scoped>
 </style>

@@ -1,16 +1,14 @@
-<template>
-  <canvas :id="id" :key="id"></canvas>
-</template>
-
 <script lang="ts">
-import { defineComponent, nextTick, PropType, onMounted, Ref, ref, watch } from 'vue';
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { useMediaQuery } from '@vueuse/core';
+import type { PropType, Ref } from 'vue'
 
-import { colors } from '@/utils';
+import { useMediaQuery } from '@vueuse/core'
+import Chart from 'chart.js'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { defineComponent, nextTick, onMounted, ref, watch } from 'vue'
 
-Chart.plugins.unregister(ChartDataLabels);
+import { colors } from '@/utils'
+
+Chart.plugins.unregister(ChartDataLabels)
 
 export default defineComponent({
   props: {
@@ -34,29 +32,30 @@ export default defineComponent({
       default: 'bar',
     },
   },
+  emits: ['barClick'],
   setup(props, { emit }) {
-    const barInstance: Ref<Chart | null> = ref(null);
-    const isLargeScreen = useMediaQuery('(min-width: 768px)');
+    const barInstance: Ref<Chart | null> = ref(null)
+    const isLargeScreen = useMediaQuery('(min-width: 768px)')
 
     watch(
       () => props.data,
       () => {
-        initChart();
-      }
-    );
+        initChart()
+      },
+    )
 
     onMounted(() => {
-      initChart();
-    });
+      initChart()
+    })
 
     async function initChart() {
-      await nextTick();
+      await nextTick()
 
       if (barInstance.value) {
-        barInstance.value.clear();
+        barInstance.value.clear()
       }
 
-      const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
+      const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
       barInstance.value = new Chart(ctx, {
         plugins: [ChartDataLabels],
         type: props.type,
@@ -108,30 +107,36 @@ export default defineComponent({
               textStrokeColor: '#ffffff',
               textStrokeWidth: 3,
               formatter(value) {
-                return value > 0 ? value : '';
+                return value > 0 ? value : ''
               },
             },
           },
           onClick(event, element) {
-            const index = element?.[0]?.['_index'];
-            const label = element?.[0]?.['_view']?.['label'];
-            if (isNaN(index)) {
-              return;
+            // @ts-expect-error element is not typed in Chart.js
+            const index = element?.[0]?._index
+            // @ts-expect-error element is not typed in Chart.js
+            const label = element?.[0]?._view?.label
+            if (Number.isNaN(index)) {
+              return
             }
 
-            emit('bar-click', {
+            emit('barClick', {
               index,
               label,
-            });
+            })
           },
         },
-      });
+      })
     }
 
-    return {};
+    return {}
   },
-});
+})
 </script>
+
+<template>
+  <canvas :id="id" :key="id" />
+</template>
 
 <style lang="scss" scoped>
 </style>

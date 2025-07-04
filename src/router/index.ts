@@ -1,4 +1,6 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Home from '../views/Home.vue'
 
@@ -6,12 +8,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
   },
   {
     path: '/movie',
     name: 'Movie',
-    component: () => import('../views/Movie.vue')
+    component: () => import('../views/Movie.vue'),
   },
   {
     path: '/mi',
@@ -28,14 +30,14 @@ const routes: Array<RouteRecordRaw> = [
         path: 'activity',
         name: 'MiActivity',
         component: () => import('../views/MiActivity.vue'),
-      }
-    ]
-  }
+      },
+    ],
+  },
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
 })
 
 export default router

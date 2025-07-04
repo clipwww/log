@@ -1,11 +1,10 @@
-<template>
-  <canvas :id="id" :key="id"></canvas>
-</template>
-
 <script lang="ts">
-import { defineComponent, nextTick, PropType, onMounted, Ref, ref, watch } from 'vue';
-import Chart, { ChartDataSets } from 'chart.js';
-import { useMediaQuery } from '@vueuse/core';
+import type { ChartDataSets } from 'chart.js'
+import type { PropType, Ref } from 'vue'
+
+import { useMediaQuery } from '@vueuse/core'
+import Chart from 'chart.js'
+import { defineComponent, nextTick, onMounted, ref, watch } from 'vue'
 
 export default defineComponent({
   props: {
@@ -23,28 +22,28 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const lineInstance: Ref<Chart | null> = ref(null);
-    const isLargeScreen = useMediaQuery('(min-width: 768px)');
+    const lineInstance: Ref<Chart | null> = ref(null)
+    const isLargeScreen = useMediaQuery('(min-width: 768px)')
 
     watch(
       () => props.datasets,
       () => {
-        initChart();
-      }
-    );
+        initChart()
+      },
+    )
 
     onMounted(() => {
-      initChart();
-    });
+      initChart()
+    })
 
     async function initChart() {
-      await nextTick();
+      await nextTick()
 
       if (lineInstance.value) {
-        lineInstance.value.clear();
+        lineInstance.value.clear()
       }
 
-      const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D;
+      const ctx = (document.getElementById(props.id) as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
       lineInstance.value = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -80,13 +79,17 @@ export default defineComponent({
             ],
           },
         },
-      });
+      })
     }
 
-    return {};
+    return {}
   },
-});
+})
 </script>
+
+<template>
+  <canvas :id="id" :key="id" />
+</template>
 
 <style lang="scss" scoped>
 </style>

@@ -1,3 +1,18 @@
+<script lang="ts">
+import { Tabbar, TabbarItem } from 'vant'
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  components: {
+    VanTabbar: Tabbar,
+    VanTabbarItem: TabbarItem,
+  },
+  setup() {
+    return {}
+  },
+})
+</script>
+
 <template>
   <div class="pb-16">
     <router-view v-slot="{ Component }">
@@ -6,27 +21,21 @@
       </keep-alive>
     </router-view>
 
-    <van-tabbar class="border-t" route fixed safe-area-inset-bottom>
-      <van-tabbar-item class="bg-gray-200" :to="{ name: 'MiSport' }">Sport</van-tabbar-item>
-      <van-tabbar-item class="bg-gray-200" :to="{ name: 'MiActivity' }">Activity</van-tabbar-item>
-    </van-tabbar>
+    <VanTabbar
+      class="border-t"
+      route
+      fixed
+      safe-area-inset-bottom
+    >
+      <VanTabbarItem class="bg-gray-200" :to="{ name: 'MiSport' }">
+        Sport
+      </VanTabbarItem>
+      <VanTabbarItem class="bg-gray-200" :to="{ name: 'MiActivity' }">
+        Activity
+      </VanTabbarItem>
+    </VanTabbar>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { Tabbar, TabbarItem } from 'vant';
-
-export default defineComponent({
-  components: {
-    VanTabbar: Tabbar,
-    VanTabbarItem: TabbarItem,
-  },
-  setup() {
-    return {};
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 </style>

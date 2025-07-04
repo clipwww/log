@@ -1,16 +1,14 @@
-<template>
-  <LineChart :id="id" :key="id" :datasets="datasets" :labels="labels" />
-</template>
-
 <script lang="ts">
-import { defineComponent, PropType, computed } from 'vue';
-import _groupBy from 'lodash/groupBy';
+import type { PropType } from 'vue'
 
-import { dayjs } from '@/plugins/dayjs';
-import { colors } from '@/utils';
-import { MovieRecordVM } from '@/view-models';
+import _groupBy from 'lodash/groupBy'
+import { computed, defineComponent } from 'vue'
 
-import LineChart from '@/components/LineChart.vue';
+import type { MovieRecordVM } from '@/view-models'
+
+import LineChart from '@/components/LineChart.vue'
+import { dayjs } from '@/plugins/dayjs'
+import { colors } from '@/utils'
 
 export default defineComponent({
   components: {
@@ -29,16 +27,16 @@ export default defineComponent({
   setup(props) {
     const arrayByYear = computed(() => {
       const group = _groupBy(props.records, (item) => {
-        return dayjs(item.date).year();
-      });
+        return dayjs(item.date).year()
+      })
 
       return Object.keys(group).map((key) => {
         return {
           id: +key,
           records: group[key],
-        };
-      });
-    });
+        }
+      })
+    })
 
     const datasets = computed(() => {
       return [
@@ -53,7 +51,7 @@ export default defineComponent({
         {
           type: 'line',
           label: '總票數',
-          data: arrayByYear.value.map((item) => item.records.reduce((total, item) => (total += item.tickets), 0)),
+          data: arrayByYear.value.map(item => item.records.reduce((total, item) => (total += item.tickets), 0)),
           borderColor: colors[3],
           backgroundColor: colors[3],
           fill: false,
@@ -61,7 +59,7 @@ export default defineComponent({
         {
           type: 'line',
           label: '總場數',
-          data: arrayByYear.value.map((item) => item.records.length),
+          data: arrayByYear.value.map(item => item.records.length),
           borderColor: colors[2],
           backgroundColor: colors[2],
           fill: false,
@@ -93,17 +91,26 @@ export default defineComponent({
         //   backgroundColor: colors[4],
         //   fill: false,
         // },
-      ];
-    });
-    const labels = computed(() => arrayByYear.value.map((item) => `${item.id}`));
+      ]
+    })
+    const labels = computed(() => arrayByYear.value.map(item => `${item.id}`))
 
     return {
       datasets,
       labels,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <LineChart
+    :id="id"
+    :key="id"
+    :datasets="datasets"
+    :labels="labels"
+  />
+</template>
 
 <style lang="scss" scoped>
 </style>
