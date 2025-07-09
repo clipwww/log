@@ -5,8 +5,7 @@ import { initVueGtag } from '@/plugins/vue-gtag'
 import App from './App.vue'
 import router from './router'
 import '@vant/touch-emulator'
-
-import './registerServiceWorker'
+// import './registerServiceWorker'
 import 'vant/lib/index.css'
 
 import '@/assets/css/tailwind.css'
