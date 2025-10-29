@@ -14,7 +14,7 @@ export function requestGET<T>(type: string): Promise<ResultListGenericVM<T>> {
     })
     xmlHttpReq.addEventListener('error', e => reject(e))
     xmlHttpReq.addEventListener('abort', e => reject(e))
-    xmlHttpReq.open('GET', `https://mechakucha-api-clipwww.vercel.app/my-log/${type}`)
+    xmlHttpReq.open('GET', `https://mechakucha-api.vercel.app/my-log/${type}`)
     xmlHttpReq.send()
   })
 }

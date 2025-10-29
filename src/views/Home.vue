@@ -16,8 +16,9 @@ export default defineComponent({
 <template>
   <div class="py-2 bg-gray-200 min-h-screen">
     <VanGrid :column-num="2" :gutter="8" border>
-      <VanGridItem icon="photo-o" text="看電影紀錄" :to="{ name: 'Movie' }" />
-      <VanGridItem icon="photo-o" text="小米手環紀錄" :to="{ name: 'Mi' }" />
+      <VanGridItem icon="video-o" text="看電影紀錄" :to="{ name: 'Movie' }" />
+      <VanGridItem icon="records-o" text="棒球紀錄" :to="{ name: 'Baseball' }" />
+      <VanGridItem icon="fire-o" text="小米手環紀錄" :to="{ name: 'Mi' }" />
     </VanGrid>
   </div>
 </template>

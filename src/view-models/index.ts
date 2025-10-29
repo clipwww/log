@@ -57,3 +57,18 @@ export interface ResultListGenericVM<T> extends ResultVM {
     pageAmount: number
   }
 }
+
+export interface BaseballRecordVM {
+  id: string
+  memo: string
+  date: string
+  gameName: string
+  league: string
+  awayTeam: string
+  homeTeam: string
+  score: string
+  venue: string
+  price: number | string
+  seat: string
+  recordLink: string
+}
