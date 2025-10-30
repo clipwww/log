@@ -22,6 +22,13 @@ const venueCoords: Record<string, [number, number]> = {
   // 添加更多如果需要
 }
 
+const mapIcon = L.icon({
+  iconUrl: `${import.meta.env.BASE_URL}images/marker-icon.png`,
+  iconSize: [41, 41],
+  iconAnchor: [20, 41],
+  popupAnchor: [0, -35],
+})
+
 const leagueLogos: Record<string, string> = {
   CPBL: 'https://www.cpbl.com.tw/theme/common/images/project/logo_new.png',
   MLB: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1280px-Major_League_Baseball_logo.svg.png',
@@ -47,13 +54,20 @@ function initMap() {
     if (coord) {
       const popupContent = venueRecords.map((r, idx) => `
         <div class="mb-2 ${idx > 0 ? 'border-t pt-2' : ''}">
-          <strong>${r.gameName}</strong><br>
-          ${r.awayTeam} ${r.score.split(':')[0]} vs ${r.homeTeam} ${r.score.split(':')[1]}<br>
-          <small>${formatDate(r.date)}</small>
+          <div class="flex items-center gap-3">
+            <div class="flex-1">
+              <strong>${r.gameName}</strong><br>
+              ${r.awayTeam} ${r.score.split(':')[0]} vs ${r.homeTeam} ${r.score.split(':')[1]}<br>
+              <small>${formatDate(r.date)}</small>
+            </div>
+            <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">
+              ${venueRecords.length - idx}
+            </div>
+          </div>
         </div>
       `).join('')
 
-      L.marker(coord).addTo(map).bindPopup(`
+      L.marker(coord, { icon: mapIcon }).addTo(map).bindPopup(`
         <div class="max-w-xs">
           <h3 class="font-bold mb-2 border-b border-solid pb-2">${venue}</h3>
           <div class="max-h-64 overflow-y-auto">
@@ -159,8 +173,8 @@ function formatDate(date: string) {
           </template>
           <template #extra />
           <template #right-icon>
-            <div class="flex items-center justify-center mr-1">
-              No. {{ records.length - index }}
+            <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">
+              {{ records.length - index }}
             </div>
           </template>
         </VanCell>
