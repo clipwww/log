@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { Cell as VanCell, List as VanList, NavBar as VanNavBar, Skeleton as VanSkeleton, SkeletonImage as VanSkeletonImage, Tag as VanTag } from 'vant'
+import { Cell as VanCell, List as VanList, NavBar as VanNavBar, Popup as VanPopup, Skeleton as VanSkeleton, Tab as VanTab, Tabs as VanTabs, Tag as VanTag } from 'vant'
 import { computed, nextTick, onMounted, ref } from 'vue'
 
 import type { BaseballRecordVM } from '@/view-models'
 
+import BarChart from '@/components/BarChart.vue'
 import { dayjs } from '@/plugins/dayjs'
 import { requestGET } from '@/services'
 
 const records = ref<BaseballRecordVM[]>([])
 const loading = ref(true)
+const activeTab = ref('map')
+const showVenuePopup = ref(false)
+const popupVenue = ref('')
+const popupRecords = ref<BaseballRecordVM[]>([])
 
 const venueCoords: Record<string, [number, number]> = {
   台北大巨蛋: [25.042327, 121.5601],
@@ -35,9 +40,19 @@ const leagueLogos: Record<string, string> = {
   WBSC: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Wbsc-logo.svg',
 }
 
+let mapInstance: L.Map | null = null
+
 function initMap() {
-  const map = L.map('map').setView([23.5, 121], 7)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+  if (!document.getElementById('map')) {
+    return
+  }
+
+  if (mapInstance) {
+    return
+  }
+
+  mapInstance = L.map('map').setView([23.5, 121], 7)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance)
 
   // Group records by venue
   const recordsByVenue: Record<string, BaseballRecordVM[]> = {}
@@ -67,7 +82,7 @@ function initMap() {
         </div>
       `).join('')
 
-      L.marker(coord, { icon: mapIcon }).addTo(map).bindPopup(`
+      L.marker(coord, { icon: mapIcon }).addTo(mapInstance!).bindPopup(`
         <div class="max-w-xs">
           <h3 class="font-bold mb-2 border-b border-solid pb-2">${venue}</h3>
           <div class="max-h-64 overflow-y-auto">
@@ -85,7 +100,9 @@ onMounted(async () => {
     records.value = result.items
     loading.value = false
     nextTick(() => {
-      initMap()
+      if (activeTab.value === 'map') {
+        initMap()
+      }
     })
   } else {
     loading.value = false
@@ -104,6 +121,41 @@ const homeWinRate = computed(() => {
   })
   return total ? `${(wins / total * 100).toFixed(1)}%` : '0%'
 })
+
+const venueStats = computed(() => {
+  const counts = new Map<string, number>()
+  records.value.forEach((record) => {
+    counts.set(record.venue, (counts.get(record.venue) ?? 0) + 1)
+  })
+  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1])
+
+  return {
+    labels: sorted.map(([venue]) => venue),
+    data: sorted.map(([, count]) => count),
+  }
+})
+
+const venueListInPopup = computed(() => {
+  return [...popupRecords.value].sort((a, b) => (a.date > b.date ? -1 : 1))
+})
+
+function handleBarClick(payload: { index: number, label: string }) {
+  const venue = payload.label
+  if (!venue) {
+    return
+  }
+  popupVenue.value = venue
+  popupRecords.value = records.value.filter(record => record.venue === venue)
+  showVenuePopup.value = true
+}
+
+function handleTabChange(name: string) {
+  if (name === 'map') {
+    nextTick(() => {
+      initMap()
+    })
+  }
+}
 
 function formatDate(date: string) {
   return dayjs(date).format('YYYY/MM/DD (dd)')
@@ -128,7 +180,23 @@ function formatDate(date: string) {
         <p>主場勝率: {{ homeWinRate }}</p>
       </div>
     </VanSkeleton>
-    <div id="map" style="height: 400px; margin: 16px;" class="bg-gray-100 rounded" />
+    <VanTabs v-model:active="activeTab" sticky border @change="handleTabChange">
+      <VanTab title="地圖" name="map">
+        <div id="map" style="height: 400px; margin: 16px;" class="bg-gray-100 rounded" />
+      </VanTab>
+      <VanTab title="球場次數" name="chart">
+        <div v-if="venueStats.labels.length" class="p-4">
+          <BarChart
+            id="baseball-venue-count"
+            :labels="venueStats.labels"
+            :data="venueStats.data"
+            title="各球場看球次數"
+            type="horizontalBar"
+            @barClick="handleBarClick"
+          />
+        </div>
+      </VanTab>
+    </VanTabs>
     <VanSkeleton
       :loading="loading"
       title
@@ -180,7 +248,67 @@ function formatDate(date: string) {
         </VanCell>
       </VanList>
     </VanSkeleton>
+    <VanPopup
+      v-model:show="showVenuePopup"
+      round
+      position="bottom"
+      :style="{ height: '85%' }"
+      closeable
+    >
+      <div class="px-4 py-3 text-sm font-semibold">
+        {{ popupVenue }} ({{ popupRecords.length }})
+      </div>
+      <div class="pb-8 overflow-y-auto h-calc">
+        <VanList>
+          <VanCell
+            v-for="(record, index) in venueListInPopup"
+            :key="record.id"
+          >
+            <template #icon>
+              <div class="mr-3 bg-gray-50 rounded-xl flex items-center justify-center p-1">
+                <img :src="leagueLogos[record.league]" alt="league logo" class="w-10">
+              </div>
+            </template>
+            <template #title>
+              <div class="text-xs">
+                {{ record.gameName }}
+              </div>
+              <div class="inline-flex items-center justify-center font-semibold space-x-1">
+                <div>{{ record.awayTeam }} <span>{{ record.score.split(':')[0] }}</span> vs {{ record.homeTeam }} <span>{{ record.score.split(':')[1] }}</span></div>
+              </div>
+              <div>{{ formatDate(record.date) }}</div>
+            </template>
+            <template #label>
+              <span class="mr-3">{{ record.memo }}</span>
+              <VanTag
+                type="success"
+                plain
+              >
+                {{ record.venue }}
+              </VanTag>
+              <a
+                v-if="record.recordLink"
+                class="ml-3 text-xs text-blue-300"
+                :href="record.recordLink"
+                target="_blank"
+              >
+                賽事連結
+              </a>
+            </template>
+            <template #right-icon>
+              <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">
+                {{ venueListInPopup.length - index }}
+              </div>
+            </template>
+          </VanCell>
+        </VanList>
+      </div>
+    </VanPopup>
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.h-calc {
+  height: calc(100% - 40px);
+}
+</style>
