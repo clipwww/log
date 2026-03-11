@@ -51,7 +51,11 @@ function initMap() {
     return
   }
 
-  mapInstance = L.map('map').setView([23.5, 121], 7)
+  mapInstance = L.map('map')
+  mapInstance.fitBounds([
+    [21.5, 118.0],
+    [36.8, 141.5],
+  ])
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance)
 
   // Group records by venue
@@ -122,6 +126,25 @@ const homeWinRate = computed(() => {
   return total ? `${(wins / total * 100).toFixed(1)}%` : '0%'
 })
 
+const taiwanIntlWinRate = computed(() => {
+  let wins = 0
+  let total = 0
+  records.value.forEach((r) => {
+    if (!r.homeTeam.includes('台灣') && !r.awayTeam.includes('台灣')) {
+      return
+    }
+    const [away, home] = r.score.split(':').map(Number)
+    const isHome = r.homeTeam.includes('台灣')
+    const taiwanScore = isHome ? home : away
+    const oppScore = isHome ? away : home
+    if (taiwanScore > oppScore) {
+      wins++
+    }
+    total++
+  })
+  return total ? `${(wins / total * 100).toFixed(1)}%` : '0%'
+})
+
 const venueStats = computed(() => {
   const counts = new Map<string, number>()
   records.value.forEach((record) => {
@@ -176,8 +199,32 @@ function formatDate(date: string) {
         <h2 class="text-lg font-bold">
           統計數據
         </h2>
-        <p>總場次: {{ records.length }}</p>
-        <p>主場勝率: {{ homeWinRate }}</p>
+        <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div class="rounded-xl border border-solid border-gray-200 bg-white p-4 shadow-sm">
+            <div class="text-xs text-gray-500">
+              總場次
+            </div>
+            <div class="mt-1 text-2xl font-semibold text-gray-900">
+              {{ records.length }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-solid border-gray-200 bg-white p-4 shadow-sm">
+            <div class="text-xs text-gray-500">
+              主場勝率
+            </div>
+            <div class="mt-1 text-2xl font-semibold text-gray-900">
+              {{ homeWinRate }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-solid border-gray-200 bg-white p-4 shadow-sm">
+            <div class="text-xs text-gray-500">
+              國際賽事台灣勝率
+            </div>
+            <div class="mt-1 text-2xl font-semibold text-gray-900">
+              {{ taiwanIntlWinRate }}
+            </div>
+          </div>
+        </div>
       </div>
     </VanSkeleton>
     <VanTabs v-model:active="activeTab" sticky border @change="handleTabChange">
