@@ -13,6 +13,7 @@ import { requestGET } from '@/services'
 const records = ref<BaseballRecordVM[]>([])
 const loading = ref(true)
 const activeTab = ref('map')
+const listFilter = ref<'all' | 'intl' | 'cpbl'>('all')
 const showVenuePopup = ref(false)
 const popupVenue = ref('')
 const popupRecords = ref<BaseballRecordVM[]>([])
@@ -113,6 +114,20 @@ onMounted(async () => {
   }
 })
 
+function isIntlRecord(r: BaseballRecordVM) {
+  return r.homeTeam.includes('台灣') || r.awayTeam.includes('台灣')
+}
+
+const filteredRecords = computed(() => {
+  if (listFilter.value === 'intl') {
+    return records.value.filter(r => isIntlRecord(r))
+  }
+  if (listFilter.value === 'cpbl') {
+    return records.value.filter(r => r.league === 'CPBL')
+  }
+  return records.value
+})
+
 const homeWinRate = computed(() => {
   let wins = 0
   let total = 0
@@ -126,11 +141,15 @@ const homeWinRate = computed(() => {
   return total ? `${(wins / total * 100).toFixed(1)}%` : '0%'
 })
 
-const taiwanIntlWinRate = computed(() => {
+const intlGameCount = computed(() => {
+  return records.value.filter(r => isIntlRecord(r)).length
+})
+
+const taiwanIntlStats = computed(() => {
   let wins = 0
   let total = 0
   records.value.forEach((r) => {
-    if (!r.homeTeam.includes('台灣') && !r.awayTeam.includes('台灣')) {
+    if (!isIntlRecord(r)) {
       return
     }
     const [away, home] = r.score.split(':').map(Number)
@@ -142,7 +161,11 @@ const taiwanIntlWinRate = computed(() => {
     }
     total++
   })
-  return total ? `${(wins / total * 100).toFixed(1)}%` : '0%'
+
+  return {
+    total,
+    winRate: total ? `${((wins / total) * 100).toFixed(1)}%` : '0%',
+  }
 })
 
 const venueStats = computed(() => {
@@ -199,7 +222,7 @@ function formatDate(date: string) {
         <h2 class="text-lg font-bold">
           統計數據
         </h2>
-        <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div class="rounded-xl border border-solid border-gray-200 bg-white p-4 shadow-sm">
             <div class="text-xs text-gray-500">
               總場次
@@ -218,16 +241,32 @@ function formatDate(date: string) {
           </div>
           <div class="rounded-xl border border-solid border-gray-200 bg-white p-4 shadow-sm">
             <div class="text-xs text-gray-500">
-              國際賽事台灣勝率
+              國際賽場次
             </div>
             <div class="mt-1 text-2xl font-semibold text-gray-900">
-              {{ taiwanIntlWinRate }}
+              {{ intlGameCount }}
+            </div>
+          </div>
+          <div class="rounded-xl border border-solid border-gray-200 bg-white p-4 shadow-sm">
+            <div class="text-xs text-gray-500">
+              國際賽事台灣勝率
+            </div>
+            <div class="inline-block mt-1 text-2xl font-semibold text-gray-900">
+              {{ taiwanIntlStats.winRate }}
+            </div>
+            <div class="inline-block text-xs text-gray-500">
+              （共 {{ taiwanIntlStats.total }} 場）
             </div>
           </div>
         </div>
       </div>
     </VanSkeleton>
-    <VanTabs v-model:active="activeTab" sticky border @change="handleTabChange">
+    <VanTabs
+      v-model:active="activeTab"
+      sticky
+      border
+      @change="handleTabChange"
+    >
       <VanTab title="地圖" name="map">
         <div id="map" style="height: 400px; margin: 16px;" class="bg-gray-100 rounded" />
       </VanTab>
@@ -239,7 +278,7 @@ function formatDate(date: string) {
             :data="venueStats.data"
             title="各球場看球次數"
             type="horizontalBar"
-            @barClick="handleBarClick"
+            @bar-click="handleBarClick"
           />
         </div>
       </VanTab>
@@ -250,9 +289,32 @@ function formatDate(date: string) {
       avatar
       :row="3"
     >
+      <div class="flex gap-2 px-4 py-2">
+        <VanTag
+          :type="listFilter === 'all' ? 'primary' : 'default'"
+          size="medium"
+          @click="listFilter = 'all'"
+        >
+          全部
+        </VanTag>
+        <VanTag
+          :type="listFilter === 'intl' ? 'primary' : 'default'"
+          size="medium"
+          @click="listFilter = 'intl'"
+        >
+          國際賽
+        </VanTag>
+        <VanTag
+          :type="listFilter === 'cpbl' ? 'primary' : 'default'"
+          size="medium"
+          @click="listFilter = 'cpbl'"
+        >
+          中華職棒
+        </VanTag>
+      </div>
       <VanList>
         <VanCell
-          v-for="(record, index) in records"
+          v-for="(record, index) in filteredRecords"
           :key="record.id"
         >
           <template #icon>
@@ -289,7 +351,7 @@ function formatDate(date: string) {
           <template #extra />
           <template #right-icon>
             <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">
-              {{ records.length - index }}
+              {{ filteredRecords.length - index }}
             </div>
           </template>
         </VanCell>
