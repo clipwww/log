@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { Cell as VanCell, List as VanList, NavBar as VanNavBar, Popup as VanPopup, Skeleton as VanSkeleton, Tab as VanTab, Tabs as VanTabs, Tag as VanTag } from 'vant'
+import { List as VanList, NavBar as VanNavBar, Popup as VanPopup, Skeleton as VanSkeleton, Tab as VanTab, Tabs as VanTabs } from 'vant'
 import { computed, nextTick, onMounted, ref } from 'vue'
 
 import type { BaseballRecordVM } from '@/view-models'
 
 import BarChart from '@/components/BarChart.vue'
+import BaseballRecordCell from '@/components/BaseballRecordCell.vue'
 import { dayjs } from '@/plugins/dayjs'
 import { requestGET } from '@/services'
 
@@ -34,12 +35,6 @@ const mapIcon = L.icon({
   iconAnchor: [20, 41],
   popupAnchor: [0, -35],
 })
-
-const leagueLogos: Record<string, string> = {
-  CPBL: 'https://www.cpbl.com.tw/theme/common/images/project/logo_new.png',
-  MLB: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1280px-Major_League_Baseball_logo.svg.png',
-  WBSC: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Wbsc-logo.svg',
-}
 
 let mapInstance: L.Map | null = null
 
@@ -290,71 +285,30 @@ function formatDate(date: string) {
       :row="3"
     >
       <div class="flex gap-2 px-4 py-2">
-        <VanTag
-          :type="listFilter === 'all' ? 'primary' : 'default'"
-          size="medium"
-          @click="listFilter = 'all'"
+        <button
+          v-for="opt in [
+            { key: 'all', label: '全部' },
+            { key: 'intl', label: '國際賽' },
+            { key: 'cpbl', label: '中華職棒' },
+          ]"
+          :key="opt.key"
+          class="cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition-colors"
+          :class="listFilter === opt.key
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+          @click="listFilter = opt.key as typeof listFilter"
         >
-          全部
-        </VanTag>
-        <VanTag
-          :type="listFilter === 'intl' ? 'primary' : 'default'"
-          size="medium"
-          @click="listFilter = 'intl'"
-        >
-          國際賽
-        </VanTag>
-        <VanTag
-          :type="listFilter === 'cpbl' ? 'primary' : 'default'"
-          size="medium"
-          @click="listFilter = 'cpbl'"
-        >
-          中華職棒
-        </VanTag>
+          {{ opt.label }}
+        </button>
       </div>
       <VanList>
-        <VanCell
+        <BaseballRecordCell
           v-for="(record, index) in filteredRecords"
           :key="record.id"
-        >
-          <template #icon>
-            <div class="mr-3 bg-gray-50 rounded-xl flex items-center justify-center p-1">
-              <img :src="leagueLogos[record.league]" alt="league logo" class="w-10">
-            </div>
-          </template>
-          <template #title>
-            <div class="text-xs">
-              {{ record.gameName }}
-            </div>
-            <div class="inline-flex items-center justify-center font-semibold space-x-1">
-              <div>{{ record.awayTeam }} <span>{{ record.score.split(':')[0] }}</span> vs {{ record.homeTeam }} <span>{{ record.score.split(':')[1] }}</span></div>
-            </div>
-            <div>{{ formatDate(record.date) }}</div>
-          </template>
-          <template #label>
-            <span class="mr-3">{{ record.memo }}</span>
-            <VanTag
-              type="success"
-              plain
-            >
-              {{ record.venue }}
-            </VanTag>
-            <a
-              v-if="record.recordLink"
-              class="ml-3 text-xs text-blue-300"
-              :href="record.recordLink"
-              target="_blank"
-            >
-              賽事連結
-            </a>
-          </template>
-          <template #extra />
-          <template #right-icon>
-            <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">
-              {{ filteredRecords.length - index }}
-            </div>
-          </template>
-        </VanCell>
+          :record="record"
+          :index="index"
+          :total="filteredRecords.length"
+        />
       </VanList>
     </VanSkeleton>
     <VanPopup
@@ -369,47 +323,13 @@ function formatDate(date: string) {
       </div>
       <div class="pb-8 overflow-y-auto h-calc">
         <VanList>
-          <VanCell
+          <BaseballRecordCell
             v-for="(record, index) in venueListInPopup"
             :key="record.id"
-          >
-            <template #icon>
-              <div class="mr-3 bg-gray-50 rounded-xl flex items-center justify-center p-1">
-                <img :src="leagueLogos[record.league]" alt="league logo" class="w-10">
-              </div>
-            </template>
-            <template #title>
-              <div class="text-xs">
-                {{ record.gameName }}
-              </div>
-              <div class="inline-flex items-center justify-center font-semibold space-x-1">
-                <div>{{ record.awayTeam }} <span>{{ record.score.split(':')[0] }}</span> vs {{ record.homeTeam }} <span>{{ record.score.split(':')[1] }}</span></div>
-              </div>
-              <div>{{ formatDate(record.date) }}</div>
-            </template>
-            <template #label>
-              <span class="mr-3">{{ record.memo }}</span>
-              <VanTag
-                type="success"
-                plain
-              >
-                {{ record.venue }}
-              </VanTag>
-              <a
-                v-if="record.recordLink"
-                class="ml-3 text-xs text-blue-300"
-                :href="record.recordLink"
-                target="_blank"
-              >
-                賽事連結
-              </a>
-            </template>
-            <template #right-icon>
-              <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">
-                {{ venueListInPopup.length - index }}
-              </div>
-            </template>
-          </VanCell>
+            :record="record"
+            :index="index"
+            :total="venueListInPopup.length"
+          />
         </VanList>
       </div>
     </VanPopup>
