@@ -13,6 +13,7 @@ import AreaPieChart from '@/components/AreaPieChart.vue'
 import FrequencyBarChart from '@/components/FrequencyBarChart.vue'
 import MovieContributionChart from '@/components/MovieContributionChart.vue'
 import MovieLineChart from '@/components/MovieLineChart.vue'
+import MovieMonthlyLineChart from '@/components/MovieMonthlyLineChart.vue'
 import MovieRecordCell from '@/components/MovieRecordCell.vue'
 import MovieTimeHeatmapChart from '@/components/MovieTimeHeatmapChart.vue'
 import TheaterBarChart from '@/components/TheaterBarChart.vue'
@@ -32,6 +33,7 @@ export default defineComponent({
     VanTag: Tag,
 
     MovieRecordCell,
+    MovieMonthlyLineChart,
     FrequencyBarChart,
     MovieTimeHeatmapChart,
     TotalAnalytics,
@@ -159,7 +161,11 @@ export default defineComponent({
             <VanTabs :line-height="1" border>
               <VanTab title="全部">
                 <MovieLineChart id="total" :records="records" />
-                <div class="text-center text-xs my-2">
+                <div class="text-center text-xs mb-2 mt-6">
+                  歷年每月觀影場數對比
+                </div>
+                <MovieMonthlyLineChart id="js-monthly-line-all" :records="records" />
+                <div class="text-center text-xs mb-2 mt-6">
                   累積下來每個月各看了幾場電影
                 </div>
                 <FrequencyBarChart id="js-frequency-all" :records="records" />

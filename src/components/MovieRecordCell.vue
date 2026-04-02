@@ -21,7 +21,7 @@ export default defineComponent({
     },
     format: {
       type: String,
-      default: 'YYYY/MM/DD HH:mm',
+      default: 'YYYY/MM/DD(dd) HH:mm',
     },
     size: {
       type: String as PropType<CellSize>,

@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 
 import { useDateFormat } from '@vueuse/core'
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 
 import type { MiActivityLogVM } from '@/view-models'
 

@@ -59,6 +59,14 @@ export default defineComponent({
       records: [],
     })
 
+    const weekdayDetails: {
+      weekday: number
+      records: MovieRecordVM[]
+    } = reactive({
+      weekday: 0,
+      records: [],
+    })
+
     function formatWeekDay(weekday: number) {
       return dayjs().weekday(weekday).format('ddd')
     }
@@ -74,26 +82,65 @@ export default defineComponent({
       dayDetails.records = d.records
     }
 
+    function onWeekdayClick(d: { weekday: number, count: number }) {
+      const groupByWeekday = _groupBy(props.records, (item) => {
+        return dayjs(item.date).weekday()
+      })
+      weekdayDetails.weekday = d.weekday
+      weekdayDetails.records = groupByWeekday[d.weekday] ?? []
+    }
+
+    const totalCount = computed(() => props.records.length)
+
+    const weekdayStats = computed(() => {
+      const groupByWeekday = _groupBy(props.records, (item) => {
+        return dayjs(item.date).weekday()
+      })
+
+      return Array.from({ length: 7 }, (_, i) => ({
+        weekday: i,
+        count: groupByWeekday[i]?.length ?? 0,
+      }))
+    })
+
     return {
       dataset,
       dayDetails,
+      weekdayDetails,
+      totalCount,
+      weekdayStats,
 
       formatDate,
       formatWeekDay,
       formatHour,
       onClick,
+      onWeekdayClick,
     }
   },
 })
 </script>
 
 <template>
-  <TimeHeatmapChart :id="id" :dataset="dataset" @block-click="onClick" />
+  <TimeHeatmapChart
+    :id="id"
+    :dataset="dataset"
+    :weekday-stats="weekdayStats"
+    @block-click="onClick"
+    @weekday-click="onWeekdayClick"
+  />
 
   <MovieRecordsPopup v-model:records="dayDetails.records">
     <template #title>
       <div class="text-center py-2">
         <div>{{ formatWeekDay(dayDetails.weekday) }} {{ formatHour(dayDetails.hour) }}</div>
+      </div>
+    </template>
+  </MovieRecordsPopup>
+
+  <MovieRecordsPopup v-model:records="weekdayDetails.records">
+    <template #title>
+      <div class="text-center py-2">
+        <div>{{ formatWeekDay(weekdayDetails.weekday) }}</div>
       </div>
     </template>
   </MovieRecordsPopup>

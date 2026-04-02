@@ -17,15 +17,19 @@ export default defineComponent({
       type: Array as PropType<{ weekday: number, hour: number, value: number }[]>,
       required: true,
     },
+    weekdayStats: {
+      type: Array as PropType<{ weekday: number, count: number }[]>,
+      default: () => [],
+    },
   },
-  emits: ['blockClick'],
+  emits: ['blockClick', 'weekdayClick'],
   setup(props, { emit }) {
     const margin = { top: 10, right: 20, bottom: 20, left: 45 }
     const hourStart = 0
     const hourEnd = 24
     const rectHeight = 22
-    const svgHeight = rectHeight * (hourEnd - hourStart) + margin.top + margin.bottom
-    const chartHeight = svgHeight - margin.top - margin.bottom
+    const svgHeight = rectHeight * (hourEnd - hourStart) + margin.top + margin.bottom + (props.weekdayStats.length > 0 ? 120 : 0)
+    const chartHeight = rectHeight * (hourEnd - hourStart)
     const weekdayNames = Array.from({ length: 7 })
       .fill('')
       .map((_, i) => dayjs().weekday(i).format('ddd'))
@@ -140,6 +144,70 @@ export default defineComponent({
         .transition()
         .duration(400)
         .style('fill', d => color(d.value))
+
+      // Draw weekday statistics
+      if (props.weekdayStats && props.weekdayStats.length > 0) {
+        const statMargin = { top: 50, right: 20, bottom: 30, left: 45 }
+        const statHeight = 70
+        const statWidth = chartWidth
+        const maxCount = Math.max(...props.weekdayStats.map(s => s.count), 1)
+        const barSpacing = statWidth / 7
+        const barActualWidth = Math.max(barSpacing * 0.6, 30)
+
+        const statGroup = svg
+          .append('g')
+          .attr('class', 'weekdayStats')
+          .attr('transform', `translate(${margin.left}, ${margin.top + chartHeight + margin.bottom + statMargin.top})`)
+
+        // Y scale for stats
+        const yScale = d3.scaleLinear().domain([0, maxCount]).range([statHeight, 0])
+
+        // Draw bars
+        statGroup
+          .selectAll('rect')
+          .data(props.weekdayStats)
+          .enter()
+          .append('rect')
+          .attr('x', (d, i) => i * barSpacing + (barSpacing - barActualWidth) / 2)
+          .attr('y', d => yScale(d.count))
+          .attr('width', barActualWidth)
+          .attr('height', d => statHeight - yScale(d.count))
+          .attr('rx', 3)
+          .attr('fill', '#8cc665')
+          .attr('cursor', 'pointer')
+          .on('click', (e, d) => emit('weekdayClick', d))
+
+        // Draw labels (count on top of bars)
+        statGroup
+          .selectAll('text.count')
+          .data(props.weekdayStats)
+          .enter()
+          .append('text')
+          .attr('class', 'count')
+          .attr('x', (d, i) => i * barSpacing + barSpacing / 2)
+          .attr('y', d => yScale(d.count) - 8)
+          .text(d => d.count)
+          .style('font-size', 13)
+          .style('font-weight', 'bold')
+          .style('text-anchor', 'middle')
+          .style('fill', '#333')
+          .attr('cursor', 'pointer')
+          .on('click', (e, d) => emit('weekdayClick', d))
+
+        // Draw weekday labels (below bars)
+        statGroup
+          .selectAll('text.weekday')
+          .data(props.weekdayStats)
+          .enter()
+          .append('text')
+          .attr('class', 'weekday')
+          .attr('x', (d, i) => i * barSpacing + barSpacing / 2)
+          .attr('y', statHeight + 20)
+          .text(d => dayjs().weekday(d.weekday).format('ddd'))
+          .style('font-size', 12)
+          .style('text-anchor', 'middle')
+          .style('fill', '#666')
+      }
     }
 
     return {
